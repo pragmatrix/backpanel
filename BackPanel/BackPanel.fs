@@ -27,7 +27,7 @@ let startLocallyAt (Port port) (configuration: Configuration) =
     let arguments = {
         Title = configuration.Title
         Description = configuration.Description
-        WebsocketURL = sprintf "ws://%s:%d" ip port
+        WebsocketURL = sprintf "ws://%s:%d/ws" ip port
     }
 
     let config = 
@@ -44,7 +44,7 @@ let startLocallyAt (Port port) (configuration: Configuration) =
                 path "/flat-ui.min.css" >=> Files.file "flat-ui.min.css"
                 path "/jquery.min.js" >=> Files.file "jquery.min.js"
                 path "/flat-ui.min.js" >=> Files.file "flat-ui.min.js"
-                path "/backpanel.js" >=> Files.file "backpanel.js"
+                path "/backpanel.js" >=> page "backpanel.js" arguments
             ]
         ]
 

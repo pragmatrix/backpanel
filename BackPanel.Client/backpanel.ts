@@ -1,6 +1,6 @@
 ﻿module BackPanel
 {
-	let ws = new WebSocket("{{model.websocketURL}}");
+	let ws = new WebSocket("{{model.websocket_url}}");
 	let root = document.getElementById("content");
 	ws.onopen = onOpen;
 	ws.onmessage = onMessage;
