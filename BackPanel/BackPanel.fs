@@ -7,17 +7,14 @@ open Suave.Operators
 open Suave.DotLiquid
 open DotLiquid
 
-
-type private TemplateArguments = {
+/// Template arguments for DotLiquid (must be public, otherwise DotLiquid won't pick it up).
+type TemplateArguments = {
     Title: string
     Description: string
     WebsocketURL: string
 }
 
-
 let startLocallyAt (Port port) (configuration: Configuration) = 
-    DotLiquid.setRubyNamingConvention()
-    DotLiquid.setTemplatesDir "."
 
     let ip = "127.0.0.1"
     let binding = HttpBinding.createSimple HTTP ip port
@@ -34,7 +31,6 @@ let startLocallyAt (Port port) (configuration: Configuration) =
         { defaultConfig with 
             cancellationToken = cancellationToken
             bindings = [binding] }
-
 
     let app = 
         choose [
