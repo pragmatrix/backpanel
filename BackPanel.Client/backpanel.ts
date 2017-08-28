@@ -10,19 +10,37 @@
 		kind: "reset";
 	}
 
-	interface Response
+	interface Command
+	{
+		kind: "command";
+		command: string;
+	}
+
+	interface UpdateMessage
 	{
 		kind: "update";
-		sequence: number;
+		version: number;
+		html: string;
 	}
 
 	function onOpen(event: Event)
 	{
-		ws.send(<Reset>{ kind: "reset" });
+		ws.send({ kind: "reset" } as Reset);
 	}
 
 	function onMessage(event: MessageEvent)
 	{
-		root.innerHTML = event.data;
+		const message: UpdateMessage = event.data;
+		switch (message.kind)
+		{
+			case "update":
+				root.innerHTML = message.html;
+				break;
+		}
+	}
+
+	export function sendCommand(command: string)
+	{
+		ws.send({ kind: "command", command: command } as Command);
 	}
 }
