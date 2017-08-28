@@ -3,11 +3,6 @@ module rec BackPanel.Document
 
 open Microsoft.FSharp.Quotations
 
-type 't binding = {
-    get: obj -> 't
-    set: obj -> 't -> unit
-}
-
 type Document = 
     | Section of Properties * title: Inline * Document list
     | Row of Properties * Column list
@@ -15,9 +10,7 @@ type Document =
 type Properties = Property list
 
 type Property =
-    | Title of string
-    | Label of string
-    | Bind of Expr
+    | NoneYet
 
 type Columns = Column list 
 
@@ -42,9 +35,6 @@ let (!!) text = Text(text)
 let section properties title content = 
     Section(properties, title, content)
 
-let title title = 
-    Title title
-
 let row properties content = 
     Row(properties, content)
 
@@ -53,6 +43,3 @@ let column properties content =
 
 let checkbox properties label state command =
     Checkbox(properties, label, state, box command)
-    
-let bind (expr: Expr<'t>) = 
-    Bind(expr :> Expr)

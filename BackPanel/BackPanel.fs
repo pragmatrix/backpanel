@@ -1,5 +1,6 @@
 ﻿module BackPanel.BackPanel
 
+open System
 open System.Threading
 open System.Text
 open Suave
@@ -18,11 +19,6 @@ open Newtonsoft.Json
 type TemplateArguments = {
     Title: string
     WebsocketURL: string
-}
-
-let defaultConfiguration = {
-    Title = "BackPanel"
-    Document = fun _ -> section [] [!!"Please configure a document for this BackPanel"] []
 }
 
 /// Incoming requests.
@@ -51,7 +47,7 @@ module WS =
             return! again
     }
 
-let startLocallyAt (Port port) (configuration: Configuration<'model>) = 
+let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) = 
 
     let ip = "127.0.0.1"
     let binding = HttpBinding.createSimple HTTP ip port
@@ -86,5 +82,20 @@ let startLocallyAt (Port port) (configuration: Configuration<'model>) =
 
     let _, server = startWebServerAsync config app
     Async.Start(server, cancellationToken)
-    fun () ->
-        cancellation.Cancel()
+    { new IDisposable with
+            member this.Dispose() = cancellation.Cancel() }
+
+let defaultConfiguration() : Configuration<'model, 'event> = {
+    Title = "BackPanel"
+    Page = id {
+        Initial = Unchecked.defaultof<'model>
+        Render = fun _ -> section [] [!!"Please configure a document for this BackPanel"] []
+        Update = fun state _ -> state
+    }
+}
+
+let page initial render update = {
+    Initial = initial
+    Render = render
+    Update = update
+}

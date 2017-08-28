@@ -8,15 +8,14 @@ type Model = {
     Switch2 : bool
 }
 
-type Commands = 
-    | ChangeSwitchOne
-    | ChangeSwitchTwo
+type Event = 
+    | SwitchedOne
+    | SwitchedTwo
 
-let update (model: Model) = function
-    | ChangeSwitchOne 
-        -> { model with Switch1 = not model.Switch1 }
-    | ChangeSwitchTwo
-        -> { model with Switch2 = not model.Switch2 }
+let model = {
+    Switch1 = false
+    Switch2 = true
+}
 
 let render (model: Model) =
 
@@ -26,39 +25,36 @@ let render (model: Model) =
         section [] [!!"Settings"] [
             row [] [
                 column [] [
-                    checkbox [] [!!"Setting 1"] model.Switch1 ChangeSwitchOne
-                    checkbox [] [!!"Setting 2"] model.Switch2 ChangeSwitchTwo
+                    checkbox [] [!!"Setting 1"] model.Switch1 SwitchedOne
+                    checkbox [] [!!"Setting 2"] model.Switch2 SwitchedTwo
                 ]
                 column [] [
-                    checkbox [] [!!"Setting 1"] model.Switch1 ChangeSwitchOne
-                    checkbox [] [!!"Setting 2"] model.Switch2 ChangeSwitchTwo
+                    checkbox [] [!!"Setting 1"] model.Switch1 SwitchedOne
+                    checkbox [] [!!"Setting 2"] model.Switch2 SwitchedTwo
                 ]
             ]
         ]
     ]
 
+let update (model: Model) = function
+    | SwitchedOne 
+        -> { model with Switch1 = not model.Switch1 }
+    | SwitchedTwo
+        -> { model with Switch2 = not model.Switch2 }
 
 [<EntryPoint>]
 let main argv = 
 
-    let model = {
-        Switch1 = false
-        Switch2 = true
+    let configuration = { 
+        BackPanel.defaultConfiguration() with
+            Title = "BackPanel Example"
+            Page = BackPanel.page model render update
     }
 
-    let configuration = { 
-            BackPanel.defaultConfiguration with
-                Title = "BackPanel Example"
-                Document = render
-        }
-
-    let shutdown =
-        BackPanel.startLocallyAt (Port 8181) configuration
+    use panel = BackPanel.startLocallyAt (Port 8181) configuration
 
     Process.Start("http://localhost:8181") |> ignore
 
     Console.ReadKey true |> ignore
-
-    shutdown()
 
     0
