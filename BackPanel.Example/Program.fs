@@ -7,27 +7,34 @@ open System
 open System.Diagnostics
 
 type Model = {
-    SwitchSetting1 : bool
-    SwitchSetting2 : bool
-    SwitchSetting3 : bool
+    Switch1 : bool
+    Switch2 : bool
 }
+
+type Commands = 
+    | ChangeSwitchOne
+    | ChangeSwitchTwo
+
+let update (model: Model) = function
+    | ChangeSwitchOne 
+        -> { model with Switch1 = not model.Switch1 }
+    | ChangeSwitchTwo
+        -> { model with Switch2 = not model.Switch2 }
 
 let render (model: Model) =
 
-    section [title "BackPanel Example"] [
-        section [title "Status"] []
+    section [] [!!"BackPanel Example"] [
+        section [] [!!"Status"] []
 
-        section [title "Settings"] [
+        section [] [!!"Settings"] [
             row [] [
                 column [] [
-                    checkbox [bind <@ model.SwitchSetting1 @>] [!!"Setting 1"]
-                    checkbox [bind <@ model.SwitchSetting2 @>] [!!"Setting 2"]
-                    checkbox [bind <@ model.SwitchSetting3 @>] [!!"Setting 3"]
+                    checkbox [] [!!"Setting 1"] model.Switch1 ChangeSwitchOne
+                    checkbox [] [!!"Setting 2"] model.Switch2 ChangeSwitchTwo
                 ]
                 column [] [
-                    checkbox [bind <@ model.SwitchSetting1 @>] [!!"Setting 1"]
-                    checkbox [bind <@ model.SwitchSetting2 @>] [!!"Setting 2"]
-                    checkbox [bind <@ model.SwitchSetting3 @>] [!!"Setting 3"]
+                    checkbox [] [!!"Setting 1"] model.Switch1 ChangeSwitchOne
+                    checkbox [] [!!"Setting 2"] model.Switch2 ChangeSwitchTwo
                 ]
             ]
         ]
@@ -38,17 +45,18 @@ let render (model: Model) =
 let main argv = 
 
     let model = {
-        SwitchSetting1 = false
-        SwitchSetting2 = true
-        SwitchSetting3 = false
+        Switch1 = false
+        Switch2 = true
     }
 
     let configuration = { 
-        Title = "BackPanel Example"
-        Description = "BackPanel Example, a feature demo"
-    }
+            BackPanel.defaultConfiguration with
+                Title = "BackPanel Example"
+                Document = render
+        }
 
-    let panel = BackPanel.startLocallyAt (Port 8181) configuration
+    let panel =
+        BackPanel.startLocallyAt (Port 8181) configuration
 
     Process.Start("http://localhost:8181") |> ignore
 

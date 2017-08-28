@@ -1,8 +1,10 @@
 ﻿namespace BackPanel
 
+open BackPanel.Document
+
 type Port = Port of int
 
-type Configuration = {
+type Configuration<'model> = {
     Title: string
-    Description: string
+    Document: 'model -> Document
 }

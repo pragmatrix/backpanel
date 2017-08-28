@@ -6,15 +6,20 @@ open Suave.Filters
 open Suave.Operators
 open Suave.DotLiquid
 open DotLiquid
+open BackPanel.Document
 
 /// Template arguments for DotLiquid (must be public, otherwise DotLiquid won't pick it up).
 type TemplateArguments = {
     Title: string
-    Description: string
     WebsocketURL: string
 }
 
-let startLocallyAt (Port port) (configuration: Configuration) = 
+let defaultConfiguration = {
+    Title = "BackPanel"
+    Document = fun _ -> section [] [!!"Please configure a document for this BackPanel"] []
+}
+
+let startLocallyAt (Port port) (configuration: Configuration<'model>) = 
 
     let ip = "127.0.0.1"
     let binding = HttpBinding.createSimple HTTP ip port
@@ -23,7 +28,6 @@ let startLocallyAt (Port port) (configuration: Configuration) =
 
     let arguments = {
         Title = configuration.Title
-        Description = configuration.Description
         WebsocketURL = sprintf "ws://%s:%d/ws" ip port
     }
 
