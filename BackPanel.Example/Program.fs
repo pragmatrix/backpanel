@@ -1,10 +1,7 @@
-﻿// Learn more about F# at http://fsharp.org
-// See the 'F# Tutorial' project for more help.
-
+﻿open System
+open System.Diagnostics
 open BackPanel
 open BackPanel.Document
-open System
-open System.Diagnostics
 
 type Model = {
     Switch1 : bool
@@ -55,13 +52,13 @@ let main argv =
                 Document = render
         }
 
-    let panel =
+    let shutdown =
         BackPanel.startLocallyAt (Port 8181) configuration
 
     Process.Start("http://localhost:8181") |> ignore
 
     Console.ReadKey true |> ignore
 
-    panel()
+    shutdown()
 
-    0 // return an integer exit code
+    0

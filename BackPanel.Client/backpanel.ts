@@ -5,42 +5,51 @@
 	ws.onopen = onOpen;
 	ws.onmessage = onMessage;
 
+	// Requests
+
 	interface Reset
 	{
-		kind: "reset";
+		Case: "Reset";
 	}
 
 	interface Command
 	{
-		kind: "command";
-		command: string;
+		Case: "Command";
+		Fields: [string];
 	}
 
-	interface UpdateMessage
+	// Responses
+
+	interface Update
 	{
-		kind: "update";
-		version: number;
-		html: string;
+		Case: "Update";
+		// version, HTML
+		Fields: [number, string];
 	}
 
 	function onOpen(event: Event)
 	{
-		ws.send({ kind: "reset" } as Reset);
+		sendObject({ Case: "Reset" } as Reset);
 	}
 
 	function onMessage(event: MessageEvent)
 	{
-		const message: UpdateMessage = event.data;
-		switch (message.kind)
+		const message: Update = event.data;
+		switch (message.Case)
 		{
-			case "update":
-				root.innerHTML = message.html;
+			case "Update":
+				root.innerHTML = message.Fields[1];
 				break;
 		}
 	}
 
 	export function sendCommand(command: string)
 	{
-		ws.send({ kind: "command", command: command } as Command);
+		sendObject({ Case: "Command", Fields: [command] } as Command);
+	}
+
+	function sendObject(obj: any)
+	{
+		ws.send(JSON.stringify(obj));
 	}
 }
