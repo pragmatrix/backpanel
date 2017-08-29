@@ -64,41 +64,31 @@
     <Compile Include="HTML.fs" />
     <Compile Include="FlatUI.fs" />
     <Compile Include="BackPanel.fs" />
-    <None Include="index.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="..\node_modules\designmodo-flat-ui\dist\js\vendor\jquery.min.js">
+    <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\vendor\jquery.min.js">
       <Link>jquery.min.js</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\node_modules\designmodo-flat-ui\dist\css\vendor\bootstrap\css\bootstrap.min.css">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\css\vendor\bootstrap\css\bootstrap.min.css">
       <Link>bootstrap.min.css</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\node_modules\designmodo-flat-ui\dist\css\flat-ui.min.css">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\css\flat-ui.min.css">
       <Link>flat-ui.min.css</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\node_modules\designmodo-flat-ui\dist\js\flat-ui.min.js">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\flat-ui.min.js">
       <Link>flat-ui.min.js</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\BackPanel.Client\backpanel.js">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BackPanel.Client\backpanel.js">
       <Link>backpanel.js</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-bold.woff">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-bold.woff">
       <Link>lato-bold.woff</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-regular.woff">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-regular.woff">
       <Link>lato-regular.woff</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\node_modules\designmodo-flat-ui\fonts\glyphicons\flat-ui-icons-regular.woff">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\glyphicons\flat-ui-icons-regular.woff">
       <Link>flat-ui-icons-regular.woff</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
