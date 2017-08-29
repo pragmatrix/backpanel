@@ -1,0 +1,8 @@
+type project
+authors Armin Sander
+
+dependencies
+  Newtonsoft.Json >= 10.0.3
+  Suave >= 2.2.1
+  Suave.DotLiquid >= 2.2.1
+  FSharp.Core >= 4.2.3

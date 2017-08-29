@@ -9,10 +9,11 @@
     <OutputType>Library</OutputType>
     <RootNamespace>BackPanel</RootNamespace>
     <AssemblyName>BackPanel</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Name>BackPanel</Name>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,6 +65,7 @@
     <Compile Include="HTML.fs" />
     <Compile Include="FlatUI.fs" />
     <Compile Include="BackPanel.fs" />
+    <Compile Include="AssemblyInfo.fs" />
     <EmbeddedResource Include="index.html" />
     <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\vendor\jquery.min.js">
       <Link>jquery.min.js</Link>
@@ -89,6 +91,7 @@
     <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\glyphicons\flat-ui-icons-regular.woff">
       <Link>flat-ui-icons-regular.woff</Link>
     </EmbeddedResource>
+    <None Include="BackPanel.fsproj.paket.template" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -119,7 +122,7 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.6.1'">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
         <Reference Include="FSharp.Core">
           <HintPath>..\packages\FSharp.Core\lib\net45\FSharp.Core.dll</HintPath>
@@ -130,7 +133,7 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.6.1'">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
         <Reference Include="Newtonsoft.Json">
           <HintPath>..\packages\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -141,7 +144,7 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.6.1'">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
         <Reference Include="Suave">
           <HintPath>..\packages\Suave\lib\net40\Suave.dll</HintPath>
@@ -152,7 +155,7 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.6.1'">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
         <Reference Include="Suave.DotLiquid">
           <HintPath>..\packages\Suave.DotLiquid\lib\net40\Suave.DotLiquid.dll</HintPath>
