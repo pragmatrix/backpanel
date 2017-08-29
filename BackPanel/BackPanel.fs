@@ -24,7 +24,7 @@ type TemplateArguments = {
 /// Incoming requests.
 type Request = 
     | Reset
-    | Command of string
+    | Event of string
 
 type Response = 
     | Update of int * string
@@ -36,12 +36,22 @@ module WS =
         UTF8.GetString >> JsonConvert.DeserializeObject<'t>
     let serialize<'t> : 't -> byte[] = 
         JsonConvert.SerializeObject >> UTF8.GetBytes
+    module Base64 =  
+        let toString = Convert.ToBase64String
+
+    /// Produce a command invocation from an arbitrary event.
+    let flatUIConfiguration : FlatUI.Configuration = {
+        CommandToJavaScriptEventHandler = 
+            fun command -> 
+                let b64 = command |> serialize |> Base64.toString
+                sprintf "BackPanel.sendEventBase64('%s')" b64
+    }
 
     let ws (page: Page<'model, 'event>) (webSocket: WebSocket) (context: HttpContext) = 
 
         let render state = 
             page.Render state
-            |> FlatUI.render
+            |> FlatUI.render flatUIConfiguration
             |> HTML.render
 
         let send response = 
@@ -57,8 +67,8 @@ module WS =
                 match request with
                 | Reset 
                     -> do! send ^ Update(0, render state)
-                | Command str 
-                    -> printfn "Command: %s" str
+                | Event str 
+                    -> printfn "Event: %s" str
                 return! loop state
             | (Opcode.Close, _, _) 
                 -> do! webSocket.send Opcode.Close (ByteSegment [||]) true

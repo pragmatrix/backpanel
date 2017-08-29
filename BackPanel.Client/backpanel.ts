@@ -14,9 +14,9 @@ module BackPanel
 		Case: "Reset";
 	}
 
-	interface Command
+	interface Event_
 	{
-		Case: "Command";
+		Case: "Event";
 		Fields: [string];
 	}
 
@@ -46,9 +46,14 @@ module BackPanel
 		}
 	}
 
-	export function sendCommand(command: string)
+	export function sendEventBase64(event: string)
 	{
-		sendObject({ Case: "Command", Fields: [command] } as Command);
+		sendEvent(atob(event));
+	}
+
+	function sendEvent(event: string)
+	{
+		sendObject({ Case: "Event", Fields: [event] } as Event_);
 	}
 
 	function sendObject(obj: any)

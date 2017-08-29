@@ -4,7 +4,13 @@ module BackPanel.FlatUI
 open BackPanel.Document
 open BackPanel.HTML
 
-let render (document: Document) : Content =
+type Configuration = {
+    CommandToJavaScriptEventHandler: obj -> string
+}
+
+let render (configuration: Configuration) (document: Document) : Content =
+
+    let renderEventHandler = configuration.CommandToJavaScriptEventHandler
 
     let renderInlineFragment = function
         | InlineFragment.Text text -> Text text
@@ -23,6 +29,7 @@ let render (document: Document) : Content =
                     yield attr "data-toggle" "checkbox"
                     if state then
                         yield attr "checked" "checked"
+                    yield attr "onchange" (renderEventHandler command)
                 ] []
             let fragments = renderInline inlineLabel
             label [clazz "checkbox"] (input :: fragments) 
