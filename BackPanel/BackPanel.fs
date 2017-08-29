@@ -85,7 +85,8 @@ let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) =
     { new IDisposable with
             member this.Dispose() = cancellation.Cancel() }
 
-let defaultConfiguration() : Configuration<'model, 'event> = {
+[<GeneralizableValue>]
+let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
     Title = "BackPanel"
     Page = id {
         Initial = Unchecked.defaultof<'model>

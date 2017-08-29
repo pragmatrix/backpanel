@@ -46,7 +46,7 @@ let update (model: Model) = function
 let main argv = 
 
     let configuration = { 
-        BackPanel.defaultConfiguration() with
+        BackPanel.defaultConfiguration with
             Title = "BackPanel Example"
             Page = BackPanel.page model render update
     }
