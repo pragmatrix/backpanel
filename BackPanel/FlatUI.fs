@@ -36,7 +36,7 @@ let render (document: Document) : Content =
         | Section(properties, title, documents) ->
             let title = renderInline title
             let documents = documents |> List.map ^ renderDocument (level+1)
-            div [] (h level [] title :: documents)
+            div [] (h (level+1) [] title :: documents)
         | Row(properties, columns) ->
             columns 
             |> List.map renderColumn
