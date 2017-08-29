@@ -25,7 +25,7 @@ let render (document: Document) : Content =
                         yield attr "checked" "checked"
                 ] []
             let fragments = renderInline inlineLabel
-            label [] (input :: fragments) 
+            label [clazz "checkbox"] (input :: fragments) 
 
     let renderColumn (Column(properties, boxes)) =
         boxes 
