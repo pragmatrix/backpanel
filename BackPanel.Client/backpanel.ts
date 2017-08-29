@@ -34,7 +34,7 @@
 
 	function onMessage(event: MessageEvent)
 	{
-		const message: Update = event.data;
+		const message: Update = JSON.parse(event.data);
 		switch (message.Case)
 		{
 			case "Update":
