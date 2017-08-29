@@ -87,6 +87,18 @@
       <Link>backpanel.js</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-bold.woff">
+      <Link>lato-bold.woff</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-regular.woff">
+      <Link>lato-regular.woff</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\node_modules\designmodo-flat-ui\fonts\glyphicons\flat-ui-icons-regular.woff">
+      <Link>flat-ui-icons-regular.woff</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

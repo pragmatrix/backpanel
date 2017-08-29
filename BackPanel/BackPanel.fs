@@ -94,6 +94,9 @@ let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) =
                 path "/flat-ui.min.css" >=> Files.file "flat-ui.min.css"
                 path "/jquery.min.js" >=> Files.file "jquery.min.js"
                 path "/flat-ui.min.js" >=> Files.file "flat-ui.min.js"
+                path "/fonts/lato/lato-regular.woff" >=> Files.file "lato-regular.woff"
+                path "/fonts/lato/lato-bold.woff" >=> Files.file "lato-bold.woff"
+                path "/fonts/glyphicons/flat-ui-icons-regular.woff" >=> Files.file "flat-ui-icons-regular.woff"
                 path "/backpanel.js" >=> page "backpanel.js" arguments
                 path ("/" + wsPath) >=> WebSocket.handShake (WS.ws configuration.Page)
                 NOT_FOUND "Not found."
