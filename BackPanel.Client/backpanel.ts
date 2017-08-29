@@ -46,12 +46,7 @@ module BackPanel
 		}
 	}
 
-	export function sendEventBase64(event: string)
-	{
-		sendEvent(atob(event));
-	}
-
-	function sendEvent(event: string)
+	export function sendEvent(event: string)
 	{
 		sendObject({ Case: "Event", Fields: [event] } as Event_);
 	}

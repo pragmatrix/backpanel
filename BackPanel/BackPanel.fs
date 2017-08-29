@@ -38,13 +38,14 @@ module WS =
         JsonConvert.SerializeObject >> UTF8.GetBytes
     module Base64 =  
         let toString = Convert.ToBase64String
+        let fromString = Convert.FromBase64String
 
     /// Produce a command invocation from an arbitrary event.
     let flatUIConfiguration : FlatUI.Configuration = {
         CommandToJavaScriptEventHandler = 
             fun command -> 
                 let b64 = command |> serialize |> Base64.toString
-                sprintf "BackPanel.sendEventBase64('%s')" b64
+                sprintf "BackPanel.sendEvent('%s')" b64
     }
 
     let ws (page: Page<'model, 'event>) (webSocket: WebSocket) (context: HttpContext) = 
@@ -53,6 +54,8 @@ module WS =
             page.Render state
             |> FlatUI.render flatUIConfiguration
             |> HTML.render
+
+        let update = page.Update
 
         let send response = 
             serialize response
@@ -67,8 +70,14 @@ module WS =
                 match request with
                 | Reset 
                     -> do! send ^ Update(0, render state)
-                | Event str 
-                    -> printfn "Event: %s" str
+                | Event eventData ->
+                    let event = 
+                        eventData
+                        |> Base64.fromString
+                        |> deserialize<'event>
+                    let state = update state event
+                    do! send ^ Update(0, render state)
+                    return! loop state
                 return! loop state
             | (Opcode.Close, _, _) 
                 -> do! webSocket.send Opcode.Close (ByteSegment [||]) true
