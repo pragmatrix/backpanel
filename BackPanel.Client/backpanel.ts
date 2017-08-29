@@ -1,4 +1,6 @@
-﻿module BackPanel
+﻿declare var $: any;
+
+module BackPanel
 {
 	let ws = new WebSocket("{{model.websocket_url}}");
 	let root = document.getElementById("content");
@@ -39,6 +41,7 @@
 		{
 			case "Update":
 				root.innerHTML = message.Fields[1];
+				$('[data-toggle="checkbox"]').radiocheck();
 				break;
 		}
 	}
