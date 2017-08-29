@@ -27,10 +27,20 @@ let render (document: Document) : Content =
             let fragments = renderInline inlineLabel
             label [clazz "checkbox"] (input :: fragments) 
 
-    let renderColumn (Column(properties, boxes)) =
+    let renderColumn columnClass (Column(properties, boxes)) =
         boxes 
         |> List.map renderBox
-        |> div [clazz "col"]
+        |> div [clazz columnClass]
+
+    let rowColumnsTo12GridWidth columnCount = 
+        match columnCount with
+        | 1 -> 12
+        | 2 -> 6
+        | 3 -> 4
+        | 4 -> 3
+        | 6 -> 2
+        | 12 -> 1
+        | _ -> failwithf "%d columns are not supported" columnCount
 
     let rec renderDocument level = function
         | Section(properties, title, documents) ->
@@ -38,8 +48,10 @@ let render (document: Document) : Content =
             let documents = documents |> List.map ^ renderDocument (level+1)
             div [] (h (level+1) [] title :: documents)
         | Row(properties, columns) ->
+            let columnWidth = rowColumnsTo12GridWidth columns.Length
+            let columnClass = sprintf "col-md-%d" columnWidth
             columns 
-            |> List.map renderColumn
+            |> List.map ^ renderColumn columnClass
             |> div [clazz "row"]
 
     document
