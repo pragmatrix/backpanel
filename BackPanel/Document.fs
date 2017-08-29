@@ -1,32 +1,33 @@
-﻿/// BackPanel semantic rendering.
+﻿/// BackPanel semantic document structure.
 module rec BackPanel.Document
 
-open Microsoft.FSharp.Quotations
+[<AutoOpen>]
+module Representation =
 
-type Document = 
-    | Section of Properties * title: Inline * Document list
-    | Row of Properties * Column list
+    type Document = 
+        | Section of Properties * title: Inline * Document list
+        | Row of Properties * Column list
 
-type Properties = Property list
+    type Properties = Property list
 
-type Property =
-    | NoneYet
+    type Property =
+        | NoneYet
 
-type Columns = Column list 
+    type Columns = Column list 
 
-type Column = 
-    | Column of Properties * Box list
+    type Column = 
+        | Column of Properties * Box list
 
-/// A box.
-type Box = 
-    | Paragraph of Inline
-    | Checkbox of Properties * Inline * bool * obj
+    /// A box.
+    type Box = 
+        | Paragraph of Inline
+        | Checkbox of Properties * Inline * bool * obj
 
-/// One single line.
-type Inline = InlineFragment list
+    /// One single line.
+    type Inline = InlineFragment list
     
-type InlineFragment = 
-    | Text of string
+    type InlineFragment = 
+        | Text of string
 
 let (!!) text = Text(text)
 
