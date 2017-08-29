@@ -44,6 +44,7 @@ let render (document: Document) : Content =
 
     document
     |> renderDocument 0
+    |> fun content -> div [clazz "container"] [content]
 
 
 
