@@ -5,11 +5,12 @@ open System.Threading
 open System.Text
 open System.IO
 open System.Reflection
+open System.Collections.Generic
+open Microsoft.FSharp.Reflection
 open Suave
 open Suave.Filters
 open Suave.Operators
 open Suave.RequestErrors
-open Suave.DotLiquid
 open Suave.Sockets
 open Suave.Sockets.Control
 open Suave.WebSocket
@@ -23,7 +24,11 @@ open Newtonsoft.Json
 type TemplateArguments = {
     Title: string
     WebsocketURL: string
-}
+} with
+    member this.Dictionary = [
+        "title", box this.Title
+        "websocket_url", box this.WebsocketURL
+    ]
 
 /// Incoming requests.
 type Request = 
@@ -104,17 +109,23 @@ module private Private =
         use reader = new StreamReader(stream)
         reader.ReadToEnd()
 
+    module Template =
+    
+        let render template (arguments: TemplateArguments) =
+            let template = Template.Parse template
+            arguments.Dictionary 
+            |> dict
+            |> Hash.FromDictionary 
+            |> template.Render
+
     let resource name = 
         sendResource assembly name false
 
-    let resourceTemplate fileName model : WebPart = 
-        fun ctx ->
-            let str = resourceString fileName
-            async {
-                let! rendered = renderPageString str model
-                return! OK rendered ctx
-            }
-
+    let resourceTemplate resource arguments : WebPart = 
+        let str = resourceString resource
+        let rendered = Template.render str arguments
+        OK rendered
+            
 let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) = 
 
     let ip = "127.0.0.1"

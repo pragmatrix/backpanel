@@ -3,6 +3,4 @@ source https://www.nuget.org/api/v2
 nuget FSharp.Core
 nuget Newtonsoft.Json
 nuget Suave
-nuget Suave.DotLiquid
-# pinned, because DotLiquid's current version is not compatible with Suave.DotLiquid
-nuget DotLiquid 2.0.64
+nuget DotLiquid 
