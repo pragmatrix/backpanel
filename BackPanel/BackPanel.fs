@@ -26,26 +26,46 @@ type Request =
     | Reset
     | Command of string
 
+type Response = 
+    | Update of int * string
+
 module WS = 
 
     let UTF8 = Encoding.UTF8
-    let deserialize<'t> = UTF8.GetString >> JsonConvert.DeserializeObject<'t>
+    let deserialize<'t> = 
+        UTF8.GetString >> JsonConvert.DeserializeObject<'t>
+    let serialize<'t> : 't -> byte[] = 
+        JsonConvert.SerializeObject >> UTF8.GetBytes
 
-    let rec ws (webSocket: WebSocket) (context: HttpContext) = socket {
-        let again = ws webSocket context
-        let! msg = webSocket.read()
-        match msg with
-        | (Opcode.Text, data, true) ->
-            let request = deserialize<Request> data
-            match request with
-            | Reset -> printfn "Reset"
-            | Command str -> printfn "Command: %s" str
-            return! again
-        | (Opcode.Close, _, _) ->
-            do! webSocket.send Opcode.Close (ByteSegment [||]) true
-        | _ -> 
-            return! again
-    }
+    let ws (page: Page<'model, 'event>) (webSocket: WebSocket) (context: HttpContext) = 
+
+        let render state = 
+            page.Render state
+            |> FlatUI.render
+            |> HTML.render
+
+        let send response = 
+            serialize response
+            |> ByteSegment
+            |> fun data -> webSocket.send Opcode.Text data true
+
+        let rec loop state = socket {
+            let! msg = webSocket.read()
+            match msg with
+            | (Opcode.Text, data, true) ->
+                let request = deserialize<Request> data
+                match request with
+                | Reset 
+                    -> do! send ^ Update(0, render state)
+                | Command str 
+                    -> printfn "Command: %s" str
+                return! loop state
+            | (Opcode.Close, _, _) 
+                -> do! webSocket.send Opcode.Close (ByteSegment [||]) true
+            | _ -> return! loop state
+        }
+
+        loop page.Initial
 
 let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) = 
 
@@ -75,7 +95,7 @@ let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) =
                 path "/jquery.min.js" >=> Files.file "jquery.min.js"
                 path "/flat-ui.min.js" >=> Files.file "flat-ui.min.js"
                 path "/backpanel.js" >=> page "backpanel.js" arguments
-                path ("/" + wsPath) >=> WebSocket.handShake WS.ws
+                path ("/" + wsPath) >=> WebSocket.handShake (WS.ws configuration.Page)
                 NOT_FOUND "Not found."
             ]
         ]
