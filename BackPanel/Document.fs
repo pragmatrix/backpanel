@@ -44,7 +44,6 @@ module Representation =
 let (!!) text = Text(text)
 
 /// Sections build a hierarchical document structure and are rendered as `h*` html elements.
-/// Use section [title "Title"] [{content}]
 let section properties title content = 
     Section(properties, title, content)
 
