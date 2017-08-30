@@ -5,8 +5,6 @@ open System.Threading
 open System.Text
 open System.IO
 open System.Reflection
-open System.Collections.Generic
-open Microsoft.FSharp.Reflection
 open Suave
 open Suave.Filters
 open Suave.Operators
