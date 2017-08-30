@@ -118,13 +118,23 @@ module private Private =
             |> Hash.FromDictionary 
             |> template.Render
 
+    let resolveMimeTypeFromName name = 
+        fun ctx ->
+            let ext = Path.GetExtension(name)
+            let mimeType = 
+                ctx.runtime.mimeTypesMap ext
+                |> Option.defaultValue { name = "text/html"; compression = false }
+            Writers.setMimeType mimeType.name ctx
+
     let resource name = 
-        sendResource assembly name false
+        resolveMimeTypeFromName name
+        >=> sendResource assembly name false
 
     let resourceTemplate resource arguments : WebPart = 
         let str = resourceString resource
         let rendered = Template.render str arguments
-        OK rendered
+        resolveMimeTypeFromName resource
+        >=> OK rendered
             
 let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) = 
 
@@ -156,7 +166,9 @@ let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) =
                 path "/fonts/lato/lato-bold.woff" >=> resource "lato-bold.woff"
                 path "/fonts/glyphicons/flat-ui-icons-regular.woff" >=> resource "flat-ui-icons-regular.woff"
                 path "/backpanel.js" >=> resourceTemplate "backpanel.js" arguments
-                path ("/" + wsPath) >=> handShake (WS.ws configuration.Page)
+                path ("/" + wsPath) 
+                    >=> Writers.setMimeType "application/json"
+                    >=> handShake (WS.ws configuration.Page)
                 NOT_FOUND "Not found."
             ]
         ]
