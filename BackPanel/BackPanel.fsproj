@@ -107,7 +107,7 @@
     <ProjectReference Include="..\BackPanel.Client\BackPanel.Client.csproj">
       <Name>BackPanel.Client</Name>
       <Project>{5eafee7d-c73c-4701-af4c-8f1f6bdc061f}</Project>
-      <Private>True</Private>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Choose>
