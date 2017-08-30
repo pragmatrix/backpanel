@@ -44,12 +44,26 @@ module WS =
     let serialize<'t> : 't -> byte[] = 
         JsonConvert.SerializeObject >> UTF8.GetBytes
 
+    [<Literal>]
+    let uniqueString = "{FC6A3BDC-8C16-4F5D-8B6D-71E42FD8CCAA}{ACF0ACDC-0519-4940-9984-77429107125E}"
+    let uniqueStringWithQuotes = sprintf "\"%s\"" uniqueString
+
+    let renderEventHandler renderable = 
+        let json =
+            match renderable with
+            | FlatUI.RenderableEvent.Simple command ->
+                command |> JsonConvert.SerializeObject
+            | FlatUI.RenderableEvent.ParameterizedThis(variable, generator) ->
+                let replacement = "this." + variable;
+                generator uniqueString
+                |> JsonConvert.SerializeObject
+                |> fun str -> str.Replace(uniqueStringWithQuotes, replacement)
+
+        sprintf "BackPanel.sendEvent(%s)" json
+
     /// Produce a command invocation from an arbitrary event.
     let flatUIConfiguration : FlatUI.Configuration = {
-        CommandToJavaScriptEventHandler = 
-            fun command -> 
-                let json = command |> JsonConvert.SerializeObject
-                sprintf "BackPanel.sendEvent(%s)" json
+        RenderEventHandler = renderEventHandler
     }
 
     let ws (page: Page<'model, 'event>) (webSocket: WebSocket) (context: HttpContext) = 

@@ -12,6 +12,10 @@ type ButtonType =
     | Link
     | Disabled
 
+type InputType =
+    | Enabled
+    | Disabled
+
 [<AutoOpen>]
 module Representation =
 
@@ -34,6 +38,7 @@ module Representation =
         | Paragraph of Inline
         | Checkbox of Properties * Inline * bool * obj
         | Button of ButtonType * Inline * obj
+        | Input of InputType * string * string * (string -> obj)
 
     /// One single line.
     type Inline = InlineFragment list
@@ -58,3 +63,9 @@ let checkbox properties label state command =
     
 let button buttonType label command = 
     Button(buttonType, label, command)
+
+let input enabled placeholder content command = 
+    Input(enabled, placeholder, content, command >> box)
+
+let para content = 
+    Paragraph content

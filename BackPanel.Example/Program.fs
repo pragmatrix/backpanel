@@ -6,15 +6,18 @@ open BackPanel.Document
 type Model = {
     Switch1 : bool
     Switch2 : bool
+    Text : string
 }
 
 type Event = 
     | SwitchedOne
     | SwitchedTwo
+    | InputChanged of string
 
 let model = {
     Switch1 = false
     Switch2 = true
+    Text = ""
 }
 
 let render (model: Model) =
@@ -32,16 +35,22 @@ let render (model: Model) =
                     checkbox [] [!!"Setting 1"] model.Switch1 SwitchedOne
                     checkbox [] [!!"Setting 2"] model.Switch2 SwitchedTwo
                     button Primary [!!"Toggle Setting 2"] SwitchedTwo
+                    
+                ]
+            ]
+            row [] [
+                column [] [
+                    input InputType.Enabled "Enter Text" model.Text InputChanged
+                    para [!!model.Text]
                 ]
             ]
         ]
     ]
 
 let update (model: Model) = function
-    | SwitchedOne 
-        -> { model with Switch1 = not model.Switch1 }
-    | SwitchedTwo
-        -> { model with Switch2 = not model.Switch2 }
+    | SwitchedOne -> { model with Switch1 = not model.Switch1 }
+    | SwitchedTwo -> { model with Switch2 = not model.Switch2 }
+    | InputChanged str -> { model with Text = str }
 
 [<EntryPoint>]
 let main argv = 

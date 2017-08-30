@@ -4,13 +4,19 @@ module BackPanel.FlatUI
 open BackPanel.Document
 open BackPanel.HTML
 
+[<RQA>]
+type RenderableEvent = 
+    | Simple of obj
+    | ParameterizedThis of variableName: string * generator: (string -> obj)
+
 type Configuration = {
-    CommandToJavaScriptEventHandler: obj -> string
+    RenderEventHandler: RenderableEvent -> string
 }
 
 let render (configuration: Configuration) (document: Document) : Content =
 
-    let renderEventHandler = configuration.CommandToJavaScriptEventHandler
+    let renderEventHandler = configuration.RenderEventHandler
+    let renderCommand = RenderableEvent.Simple >> renderEventHandler
 
     let renderInlineFragment = function
         | InlineFragment.Text text -> Text text
@@ -29,7 +35,7 @@ let render (configuration: Configuration) (document: Document) : Content =
                     yield attr "data-toggle" "checkbox"
                     if state then
                         yield attr "checked" "checked"
-                    yield attr "onchange" (renderEventHandler command)
+                    yield attr "onchange" (renderCommand command)
                 ] []
             let fragments = renderInline inlineLabel
             label [clazz "checkbox"] (input :: fragments) 
@@ -44,13 +50,24 @@ let render (configuration: Configuration) (document: Document) : Content =
                 | Inverse -> "btn-inverse"
                 | Info -> "btn-info"
                 | Link -> "btn-link"
-                | Disabled -> "disabled"
+                | ButtonType.Disabled -> "disabled"
             let allClasses = 
                 ["btn"; "btn-block"; buttonTypeClass]
 
             button 
-                [classes allClasses; attr "onclick" (renderEventHandler command)] 
+                [classes allClasses; attr "onclick" (renderCommand command)] 
                 (renderInline inlineLabel)
+
+        | Input(inputType, placeholder, text, command) ->
+            let attrs = [
+                clazz "form-control" 
+                attr "type" "text"
+                attr "value" text
+                attr "placeholder" placeholder
+                attr "oninput" (renderEventHandler (RenderableEvent.ParameterizedThis("value", command)))
+            ]
+            
+            input attrs []
 
     let renderColumn columnClass (Column(properties, boxes)) =
         boxes 
