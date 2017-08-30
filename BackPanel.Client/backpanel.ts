@@ -46,9 +46,9 @@ module BackPanel
 		}
 	}
 
-	export function sendEvent(event: string)
+	export function sendEvent(payload: any)
 	{
-		sendObject({ Case: "Event", Fields: [event] } as Event_);
+		sendObject({ Case: "Event", Fields: [JSON.stringify(payload)] } as Event_);
 	}
 
 	function sendObject(obj: any)
