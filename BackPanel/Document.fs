@@ -1,6 +1,17 @@
 ﻿/// BackPanel semantic document structure.
 module rec BackPanel.Document
 
+type ButtonType =
+    | Primary
+    | Warning
+    | Default
+    | Danger
+    | Success
+    | Inverse
+    | Info
+    | Link
+    | Disabled
+
 [<AutoOpen>]
 module Representation =
 
@@ -22,6 +33,7 @@ module Representation =
     type Box = 
         | Paragraph of Inline
         | Checkbox of Properties * Inline * bool * obj
+        | Button of ButtonType * Inline * obj
 
     /// One single line.
     type Inline = InlineFragment list
@@ -44,3 +56,6 @@ let column properties content =
 
 let checkbox properties label state command =
     Checkbox(properties, label, state, box command)
+    
+let button buttonType label command = 
+    Button(buttonType, label, command)

@@ -33,6 +33,24 @@ let render (configuration: Configuration) (document: Document) : Content =
                 ] []
             let fragments = renderInline inlineLabel
             label [clazz "checkbox"] (input :: fragments) 
+        | Button(buttonType, inlineLabel, command) ->
+            let buttonTypeClass =
+                match buttonType with
+                | Primary -> "btn-primary"
+                | Warning -> "btn-warning"
+                | Default -> "btn-default"
+                | Danger -> "btn-danger"
+                | Success -> "btn-success"
+                | Inverse -> "btn-inverse"
+                | Info -> "btn-info"
+                | Link -> "btn-link"
+                | Disabled -> "disabled"
+            let allClasses = 
+                ["btn"; "btn-block"; buttonTypeClass]
+
+            button 
+                [classes allClasses; attr "onclick" (renderEventHandler command)] 
+                (renderInline inlineLabel)
 
     let renderColumn columnClass (Column(properties, boxes)) =
         boxes 

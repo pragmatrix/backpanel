@@ -13,12 +13,14 @@ let attr name value =
     Attribute(name, value)
 
 let clazz = attr "class"
+let classes : string seq -> Attribute = String.concat " " >> attr "class"
 let h level = element (sprintf "h%d" level)
 
 let div = element "div"
 let label = element "label"
 let input = element "input"
 let p = element "p"
+let button = element "button"
 
 let render content = 
 

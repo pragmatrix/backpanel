@@ -31,6 +31,7 @@ let render (model: Model) =
                 column [] [
                     checkbox [] [!!"Setting 1"] model.Switch1 SwitchedOne
                     checkbox [] [!!"Setting 2"] model.Switch2 SwitchedTwo
+                    button Primary [!!"Toggle Setting 2"] SwitchedTwo
                 ]
             ]
         ]
