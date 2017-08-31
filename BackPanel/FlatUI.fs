@@ -38,7 +38,14 @@ let render (configuration: Configuration) (document: Document) : Content =
                     yield attr "onchange" (renderCommand command)
                 ] []
             let fragments = renderInline inlineLabel
-            label [clazz "checkbox"] (input :: fragments) 
+            let icons = 
+                span [clazz "icons"; attr "remove-on-init" "remove"] 
+                    [
+                        span [clazz "icon-unchecked"] []
+                        span [clazz "icon-checked"] []
+                    ]
+
+            label [clazz "checkbox"] (input :: icons :: fragments) 
         | Button(buttonType, inlineLabel, command) ->
             let buttonTypeClass =
                 match buttonType with
