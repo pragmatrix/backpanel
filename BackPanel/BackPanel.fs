@@ -71,7 +71,7 @@ module WS =
         let render state = 
             page.Render state
             |> FlatUI.render flatUIConfiguration
-            |> HTML.render
+            |> HTML.renderJSON
 
         let update = page.Update
 
@@ -173,6 +173,7 @@ let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) =
                 path "/fonts/lato/lato-regular.woff" >=> resource "lato-regular.woff"
                 path "/fonts/lato/lato-bold.woff" >=> resource "lato-bold.woff"
                 path "/fonts/glyphicons/flat-ui-icons-regular.woff" >=> resource "flat-ui-icons-regular.woff"
+                path "/picodom.js" >=> resource "picodom.js"
                 path "/backpanel.js" >=> resourceTemplate "backpanel.js" arguments
                 path ("/" + wsPath) 
                     >=> Writers.setMimeType "application/json"

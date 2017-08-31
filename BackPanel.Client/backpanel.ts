@@ -1,4 +1,5 @@
 ﻿declare var $: any;
+declare var picodom: any;
 
 module BackPanel
 {
@@ -34,14 +35,23 @@ module BackPanel
 		sendObject({ Case: "Reset" } as Reset);
 	}
 
+	var currentElement: HTMLElement;
+	var currentDOM: any;
+
 	function onMessage(event: MessageEvent)
 	{
 		const message: Update = JSON.parse(event.data);
 		switch (message.Case)
 		{
 			case "Update":
-				root.innerHTML = message.Fields[1];
-				$('[data-toggle="checkbox"]').radiocheck();
+				var newDOM = JSON.parse(message.Fields[1]);
+				currentElement = picodom.patch(currentDOM, newDOM, currentElement, root);
+				if (!currentDOM)
+				{
+					$('[remove-on-init="remove"]').remove();
+					$('[data-toggle="checkbox"]').radiocheck();
+				}
+				currentDOM = newDOM;
 				break;
 		}
 	}

@@ -57,59 +57,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <None Include="paket.references" />
-    <Compile Include="Prelude.fs" />
-    <Compile Include="Document.fs" />
-    <Compile Include="Types.fs" />
-    <Compile Include="HTML.fs" />
-    <Compile Include="FlatUI.fs" />
-    <Compile Include="BackPanel.fs" />
-    <Compile Include="AssemblyInfo.fs" />
-    <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\vendor\jquery.min.js">
-      <Link>jquery.min.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\css\vendor\bootstrap\css\bootstrap.min.css">
-      <Link>bootstrap.min.css</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\css\flat-ui.min.css">
-      <Link>flat-ui.min.css</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\flat-ui.min.js">
-      <Link>flat-ui.min.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\BackPanel.Client\backpanel.js">
-      <Link>backpanel.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-bold.woff">
-      <Link>lato-bold.woff</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-regular.woff">
-      <Link>lato-regular.woff</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\glyphicons\flat-ui-icons-regular.woff">
-      <Link>flat-ui-icons-regular.woff</Link>
-    </EmbeddedResource>
-    <None Include="BackPanel.fsproj.paket.template" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.ValueTuple">
-      <HintPath>packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BackPanel.Client\BackPanel.Client.csproj">
-      <Name>BackPanel.Client</Name>
-      <Project>{5eafee7d-c73c-4701-af4c-8f1f6bdc061f}</Project>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
@@ -154,4 +101,58 @@
       </ItemGroup>
     </When>
   </Choose>
+  <ItemGroup>
+    <None Include="paket.references" />
+    <Compile Include="Prelude.fs" />
+    <Compile Include="Document.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="HTML.fs" />
+    <Compile Include="FlatUI.fs" />
+    <Compile Include="BackPanel.fs" />
+    <Compile Include="AssemblyInfo.fs" />
+    <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\vendor\jquery.min.js">
+      <Link>jquery.min.js</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\css\vendor\bootstrap\css\bootstrap.min.css">
+      <Link>bootstrap.min.css</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\css\flat-ui.min.css">
+      <Link>flat-ui.min.css</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\flat-ui.min.js">
+      <Link>flat-ui.min.js</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\picodom\dist\picodom.js">
+      <Link>picodom.js</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BackPanel.Client\backpanel.js">
+      <Link>backpanel.js</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-bold.woff">
+      <Link>lato-bold.woff</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-regular.woff">
+      <Link>lato-regular.woff</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\glyphicons\flat-ui-icons-regular.woff">
+      <Link>flat-ui-icons-regular.woff</Link>
+    </EmbeddedResource>
+    <None Include="BackPanel.fsproj.paket.template" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <ProjectReference Include="..\BackPanel.Client\BackPanel.Client.csproj">
+      <Name>BackPanel.Client</Name>
+      <Project>{5eafee7d-c73c-4701-af4c-8f1f6bdc061f}</Project>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
