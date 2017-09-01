@@ -14,20 +14,20 @@ And furthermore, client side programming with JavaScript or [whatever technology
 
 BackPanel provides a [Docbook] inspired DSL to specify a user interface which is translated to HTML and served via [Suave].
 
-In addition to that, BackPanel follows the [Elm Architecture] to simplify the creation of the user interface. For a simple one like the [BackPanel Example] only two methods need to be implemented:
+In addition to that, BackPanel follows the [Elm Architecture] for the creation of the user interface. For a simple one like the [BackPanel Example] only two methods need to be implemented:
 
 - The `view` function takes in a model and creates the document.
 - The `update` function updates the view model in response to events.
 
 ### Document DSL
 
-To create a document, the [Document DSL] must be used. At the time of this writing, the document grammar and its elements are neither complete not final. A final and stable version will be indicated by a release of [Version 1.0].
+To create a document, the [Document DSL] must be used. At the time of this writing, the document grammar and its elements are neither complete nor final. A final and stable version will be indicated by a release of [Version 1.0].
 
 ## How
 
 Batteries are included. If you add the [BackPanel NuGet] to your project, it comes with [Suave], [Bootstrap], and [FlatUI]. There is no need to use a single line of JavaScript, HTML, or CSS. The F# [Document DSL] should cover everything to build the UI. And if it does not, pull requests are appreciated.
 
-Once the server starts serving the UI and the user opens the URL it is listening at, a `index.html` page with no content is delivered to the browser. This page loads a JavaScript file that connects back to server utilizing a WebSocket. This WebSocket stays connected for the time the page is open. Whenever the server has new content, it sends it to the browser and whenever the user triggers an event, the browser sends the event to the server.
+Once the server starts serving the UI and the user opens the URL it is listening at, an `index.html` page with no content is delivered to the browser. This page loads a JavaScript file that connects back to server utilizing a WebSocket. This WebSocket stays connected for the time the page is open. Whenever the server has new content, it sends it to the browser and whenever the user triggers an event, the browser sends the event to the server.
 
 The content is delivered with a JSON encoded DOM representation that is then rendered by [picodom] on the client. Incremental updates are required to avoid confusing the view state of the browser.
 
@@ -35,19 +35,19 @@ The JavaScript event handlers that are attached to the HTML elements, are genera
 
 ## FAQ
 
-Here are a few answeres to questions you have in mind.
+Here are a few answeres to questions you may have in mind.
 
 ### FlatUI is boring, can I change the style?
 
-There is no simple way to do this right now, because some code in the [BackPanel Client][10] is specifically tailored to FlatUI.
+There is no simple way to do this right now, because some code in the [BackPanel Client] is specifically tailored to [FlatUI].
 
 ### How can the view model be changed from within the application.
 
 TBD.
 
-I think it's best make to offer an `Update` function after the server is created. This update function receives one argument, a `Model -> Model` function that transforms the model.
+I think it's best to add an `Update` function to the server instance. This update can be called with one argument, a `Model -> Model` function that modifies the model and updates all clients.
 
-### How can events delivered to the application.
+### How can user events delivered to the application.
 
 TBD. 
 
@@ -68,7 +68,7 @@ Copyright 2017 Armin Sander
 [BackPanel NuGet]: https://www.myget.org/feed/pragmatrix/package/nuget/BackPanel
 [BackPanel Example]: BackPanel.Example/Program.fs
 [Document DSL]: BackPanel/Document.fs
-[Version 1.0]: milestone/1
+[Version 1.0]: https://github.com/pragmatrix/backpanel/milestone/1
 [BackPanel Client]: BackPanel.Client/backpanel.ts
 [Fable]: http://fable.io
 [MIT License]: https://opensource.org/licenses/MIT
