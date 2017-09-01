@@ -24,7 +24,29 @@ let render (configuration: Configuration) (document: Document) : Content =
     let renderInline = 
         List.map renderInlineFragment
 
-    let renderBox = function
+    let rowColumnsTo12GridWidth columnCount = 
+        match columnCount with
+        | 1 -> 12
+        | 2 -> 6
+        | 3 -> 4
+        | 4 -> 3
+        | 6 -> 2
+        | 12 -> 1
+        | _ -> failwithf "%d columns are not supported" columnCount
+
+    let rec renderBox level = function
+        | Section(title, documents) ->
+            let title = renderInline title
+            let documents = 
+                documents 
+                |> List.map ^ renderBox (level+1)
+            div [] (h (level+1) [] title :: documents)
+        | Row(columns) ->
+            let columnWidth = rowColumnsTo12GridWidth columns.Length
+            let columnClass = sprintf "col-md-%d" columnWidth
+            columns 
+            |> List.map ^ renderColumn level columnClass
+            |> div [clazz "row"]
         | Paragraph fragments -> 
             renderInline fragments
             |> p []
@@ -64,7 +86,6 @@ let render (configuration: Configuration) (document: Document) : Content =
             button 
                 [classes allClasses; attr "onclick" (renderCommand command)] 
                 (renderInline inlineLabel)
-
         | Input(inputType, placeholder, text, command) ->
             let attrs = [
                 clazz "form-control" 
@@ -76,35 +97,13 @@ let render (configuration: Configuration) (document: Document) : Content =
             
             input attrs []
 
-    let renderColumn columnClass (Column(boxes)) =
+    and renderColumn level columnClass (Column(boxes)) =
         boxes 
-        |> List.map renderBox
+        |> List.map ^ renderBox level
         |> div [clazz columnClass]
 
-    let rowColumnsTo12GridWidth columnCount = 
-        match columnCount with
-        | 1 -> 12
-        | 2 -> 6
-        | 3 -> 4
-        | 4 -> 3
-        | 6 -> 2
-        | 12 -> 1
-        | _ -> failwithf "%d columns are not supported" columnCount
-
-    let rec renderDocument level = function
-        | Section(title, documents) ->
-            let title = renderInline title
-            let documents = documents |> List.map ^ renderDocument (level+1)
-            div [] (h (level+1) [] title :: documents)
-        | Row(columns) ->
-            let columnWidth = rowColumnsTo12GridWidth columns.Length
-            let columnClass = sprintf "col-md-%d" columnWidth
-            columns 
-            |> List.map ^ renderColumn columnClass
-            |> div [clazz "row"]
-
     document
-    |> renderDocument 0
+    |> renderBox 0
     |> fun content -> div [clazz "container"] [content]
 
 

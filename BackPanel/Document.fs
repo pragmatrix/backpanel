@@ -19,21 +19,20 @@ type InputType =
 [<AutoOpen>]
 module Representation =
 
-    type Document = 
+    type Document = Box
+
+    type Box = 
         | Section of title: Inline * Document list
         | Row of Column list
+        | Paragraph of Inline
+        | Checkbox of Inline * bool * obj
+        | Button of ButtonType * Inline * obj
+        | Input of InputType * string * string * (string -> obj)
 
     type Columns = Column list 
 
     type Column = 
         | Column of Box list
-
-    /// A box.
-    type Box = 
-        | Paragraph of Inline
-        | Checkbox of Inline * bool * obj
-        | Button of ButtonType * Inline * obj
-        | Input of InputType * string * string * (string -> obj)
 
     /// One single line.
     type Inline = InlineFragment list
