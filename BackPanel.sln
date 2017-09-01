@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{327D2EE7-A0AA-48ED-BF40-5D7F03B6FF8B}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,6 +13,11 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BackPanel.Example", "BackPanel.Example\BackPanel.Example.fsproj", "{D3AA968A-33A1-44BC-9EE9-FF4A0E510C99}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackPanel.Client", "BackPanel.Client\BackPanel.Client.csproj", "{5EAFEE7D-C73C-4701-AF4C-8F1F6BDC061F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0BA40B30-3B9C-41F9-BC83-7916C15F87D5}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
