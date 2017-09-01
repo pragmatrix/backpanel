@@ -28,7 +28,7 @@ let render (configuration: Configuration) (document: Document) : Content =
         | Paragraph fragments -> 
             renderInline fragments
             |> p []
-        | Checkbox(properties, inlineLabel, state, command) -> 
+        | Checkbox(inlineLabel, state, command) -> 
             let input = 
                 input [
                     yield attr "type" "checkbox"
@@ -76,7 +76,7 @@ let render (configuration: Configuration) (document: Document) : Content =
             
             input attrs []
 
-    let renderColumn columnClass (Column(properties, boxes)) =
+    let renderColumn columnClass (Column(boxes)) =
         boxes 
         |> List.map renderBox
         |> div [clazz columnClass]
@@ -92,11 +92,11 @@ let render (configuration: Configuration) (document: Document) : Content =
         | _ -> failwithf "%d columns are not supported" columnCount
 
     let rec renderDocument level = function
-        | Section(properties, title, documents) ->
+        | Section(title, documents) ->
             let title = renderInline title
             let documents = documents |> List.map ^ renderDocument (level+1)
             div [] (h (level+1) [] title :: documents)
-        | Row(properties, columns) ->
+        | Row(columns) ->
             let columnWidth = rowColumnsTo12GridWidth columns.Length
             let columnClass = sprintf "col-md-%d" columnWidth
             columns 

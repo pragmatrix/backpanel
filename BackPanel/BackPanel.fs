@@ -192,7 +192,7 @@ let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
     Title = "BackPanel"
     Page = id {
         Initial = Unchecked.defaultof<'model>
-        Render = fun _ -> section [] [!!"Please configure a document for this BackPanel"] []
+        Render = fun _ -> section [!!"Please configure a document for this BackPanel"] []
         Update = fun state _ -> state
     }
 }

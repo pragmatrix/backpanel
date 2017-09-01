@@ -22,24 +22,23 @@ let model = {
 
 let render (model: Model) =
 
-    section [] [!!"BackPanel Example"] [
-        section [] [!!"Status"] []
+    section [!!"BackPanel Example"] [
+        section [!!"Status"] []
 
-        section [] [!!"Settings"] [
-            row [] [
-                column [] [
-                    checkbox [] [!!"Setting 1"] model.Switch1 SwitchedOne
-                    checkbox [] [!!"Setting 2"] model.Switch2 SwitchedTwo
+        section [!!"Settings"] [
+            row [
+                column [
+                    checkbox [!!"Setting 1"] model.Switch1 SwitchedOne
+                    checkbox [!!"Setting 2"] model.Switch2 SwitchedTwo
                 ]
-                column [] [
-                    checkbox [] [!!"Setting 1"] model.Switch1 SwitchedOne
-                    checkbox [] [!!"Setting 2"] model.Switch2 SwitchedTwo
+                column [
+                    checkbox [!!"Setting 1"] model.Switch1 SwitchedOne
+                    checkbox [!!"Setting 2"] model.Switch2 SwitchedTwo
                     button Primary [!!"Toggle Setting 2"] SwitchedTwo
-                    
                 ]
             ]
-            row [] [
-                column [] [
+            row [
+                column [
                     input InputType.Enabled "Enter Text" model.Text InputChanged
                     para [!!model.Text]
                 ]
