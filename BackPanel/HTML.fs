@@ -68,8 +68,7 @@ let renderJSON content =
                 writer.WriteEndObject()
                 writer.WritePropertyName("children")
                 writer.WriteStartArray()
-                for content in content do
-                    renderContent content
+                content |> Seq.iter renderContent
                 writer.WriteEndArray()
                 writer.WriteEndObject()
 
