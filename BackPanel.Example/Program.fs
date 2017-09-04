@@ -20,7 +20,7 @@ let model = {
     Text = ""
 }
 
-let render (model: Model) =
+let view (model: Model) =
 
     section [!!"BackPanel Example"] [
         section [!!"Status"] []
@@ -57,7 +57,7 @@ let main argv =
     let configuration = { 
         BackPanel.defaultConfiguration with
             Title = "BackPanel Example"
-            Page = BackPanel.page model render update
+            Page = BackPanel.page model view update
     }
 
     use panel = BackPanel.startLocallyAt (Port 8181) configuration

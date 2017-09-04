@@ -6,7 +6,7 @@ type Port = Port of int
 
 type Page<'model, 'event> = {
     Initial: 'model
-    Render: 'model -> Document
+    View: 'model -> Document
     Update: 'model -> 'event -> 'model
 }
 

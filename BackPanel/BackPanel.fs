@@ -69,7 +69,7 @@ module WS =
     let ws (page: Page<'model, 'event>) (webSocket: WebSocket) (context: HttpContext) = 
 
         let render state = 
-            page.Render state
+            page.View state
             |> FlatUI.render flatUIConfiguration
             |> HTML.renderJSON
 
@@ -192,13 +192,13 @@ let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
     Title = "BackPanel"
     Page = id {
         Initial = Unchecked.defaultof<'model>
-        Render = fun _ -> section [!!"Please configure a document for this BackPanel"] []
+        View = fun _ -> section [!!"Please configure a document for this BackPanel"] []
         Update = fun state _ -> state
     }
 }
 
-let page initial render update = {
+let page initial view update = {
     Initial = initial
-    Render = render
+    View = view
     Update = update
 }
