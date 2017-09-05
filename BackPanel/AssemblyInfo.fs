@@ -2,6 +2,7 @@
 
 open System.Reflection
 open System.Runtime.InteropServices
+open System.Runtime.CompilerServices
 
 [<assembly: AssemblyTitle("BackPanel")>]
 [<assembly: AssemblyDescription("BackPanel, simple HTML panels for your application")>]
@@ -16,8 +17,10 @@ open System.Runtime.InteropServices
 
 [<assembly: Guid("d3aa968a-33a1-44bc-9ee9-ff4a0e510c99")>]
 
-[<assembly: AssemblyVersion("0.2.0.0")>]
-[<assembly: AssemblyFileVersion("0.2.0.0")>]
+[<assembly: AssemblyVersion("0.3.0.0")>]
+[<assembly: AssemblyFileVersion("0.3.0.0")>]
+
+[<assembly: InternalsVisibleTo("BackPanel.Tests")>]
 
 do
     ()

@@ -144,7 +144,7 @@ module private Private =
         resolveMimeTypeFromName resource
         >=> OK rendered
             
-let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) = 
+let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) = 
 
     let ip = "127.0.0.1"
     let binding = HttpBinding.createSimple HTTP ip port
@@ -182,8 +182,38 @@ let startLocallyAt (Port port) (configuration: Configuration<'model, 'event>) =
             ]
         ]
 
-    let _, server = startWebServerAsync config app
-    Async.Start(server, cancellationToken)
+
+    // start the server.
+
+    match configuration.StartupMode with
+    | StartupMode.Synchronously ->
+        let listening, server = startWebServerAsync config app
+        Async.Choice [
+            listening |> Async.map (fun _ -> Some())
+            server |> Async.map Some
+        ] 
+        |> Async.RunSynchronously
+        |> ignore
+
+    | StartupMode.Asynchronously retryAfter ->
+        let rec startServer() = async {
+            let listening, server = startWebServerAsync config app
+            try
+                do! Async.Choice [
+                        listening |> Async.map (fun _ -> Some())
+                        server |> Async.map Some
+                    ] 
+                    |> Async.Ignore
+            with _ ->
+                match retryAfter with
+                | None -> ()
+                | Some retryAfter ->
+                    do! Async.Sleep (int retryAfter.TotalMilliseconds)
+                    return! startServer()
+        }
+
+        Async.Start(startServer(), cancellationToken)
+        
     { new IDisposable with
             member this.Dispose() = cancellation.Cancel() }
 
@@ -195,6 +225,7 @@ let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
         View = fun _ -> section [!!"Please configure a document for this BackPanel"] []
         Update = fun state _ -> state
     }
+    StartupMode = StartupMode.Synchronously
 }
 
 let page initial view update = {

@@ -5,15 +5,15 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>da486033-96ad-4557-81e5-724ecfb0fbe5</ProjectGuid>
+    <ProjectGuid>0fc26890-f3c0-4030-9075-5de9c845b1f5</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>BackPanel</RootNamespace>
-    <AssemblyName>BackPanel</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>BackPanel.Tests</RootNamespace>
+    <AssemblyName>BackPanel.Tests</AssemblyName>
+    <UseStandardResourceNames>true</UseStandardResourceNames>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>BackPanel</Name>
-    <TargetFrameworkProfile />
+    <Name>BackPanel.Tests</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,51 +50,10 @@
     </Otherwise>
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
   <ItemGroup>
-    <None Include="paket.references" />
-    <Compile Include="Prelude.fs" />
-    <Compile Include="Document.fs" />
-    <Compile Include="Types.fs" />
-    <Compile Include="HTML.fs" />
-    <Compile Include="FlatUI.fs" />
-    <Compile Include="BackPanel.fs" />
     <Compile Include="AssemblyInfo.fs" />
-    <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\vendor\jquery.min.js">
-      <Link>jquery.min.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\css\vendor\bootstrap\css\bootstrap.min.css">
-      <Link>bootstrap.min.css</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\css\flat-ui.min.css">
-      <Link>flat-ui.min.css</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\dist\js\flat-ui.min.js">
-      <Link>flat-ui.min.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\picodom\dist\picodom.js">
-      <Link>picodom.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\BackPanel.Client\backpanel.js">
-      <Link>backpanel.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-bold.woff">
-      <Link>lato-bold.woff</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\lato\lato-regular.woff">
-      <Link>lato-regular.woff</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\node_modules\designmodo-flat-ui\fonts\glyphicons\flat-ui-icons-regular.woff">
-      <Link>flat-ui-icons-regular.woff</Link>
-    </EmbeddedResource>
-    <None Include="BackPanel.fsproj.paket.template" />
+    <Compile Include="Robustness.fs" />
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -102,26 +61,23 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ValueTuple">
-      <HintPath>packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <HintPath>..\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <ProjectReference Include="..\BackPanel.Client\BackPanel.Client.csproj">
-      <Name>BackPanel.Client</Name>
-      <Project>{5eafee7d-c73c-4701-af4c-8f1f6bdc061f}</Project>
-      <Private>False</Private>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BackPanel\BackPanel.fsproj">
+      <Name>BackPanel</Name>
+      <Project>{da486033-96ad-4557-81e5-724ecfb0fbe5}</Project>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
-      <ItemGroup>
-        <Reference Include="DotLiquid">
-          <HintPath>..\packages\DotLiquid\lib\net45\DotLiquid.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
@@ -136,8 +92,13 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
-        <Reference Include="Newtonsoft.Json">
-          <HintPath>..\packages\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
+        <Reference Include="FsUnit.Xunit">
+          <HintPath>..\packages\FsUnit.xUnit\lib\net45\FsUnit.Xunit.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="NHamcrest">
+          <HintPath>..\packages\FsUnit.xUnit\lib\net45\NHamcrest.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -149,6 +110,50 @@
       <ItemGroup>
         <Reference Include="Suave">
           <HintPath>..\packages\Suave\lib\net40\Suave.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+      <ItemGroup>
+        <Reference Include="xunit.abstractions">
+          <HintPath>..\packages\xunit.abstractions\lib\net35\xunit.abstractions.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+      <ItemGroup>
+        <Reference Include="xunit.assert">
+          <HintPath>..\packages\xunit.assert\lib\portable-net45+win8+wp8+wpa81\xunit.assert.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+      <ItemGroup>
+        <Reference Include="xunit.core">
+          <HintPath>..\packages\xunit.extensibility.core\lib\portable-net45+win8+wp8+wpa81\xunit.core.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+      <ItemGroup>
+        <Reference Include="xunit.execution.desktop">
+          <HintPath>..\packages\xunit.extensibility.execution\lib\net45\xunit.execution.desktop.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

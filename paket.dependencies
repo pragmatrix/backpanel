@@ -1,6 +1,7 @@
 framework: auto-detect
 source https://www.nuget.org/api/v2
 nuget FSharp.Core
+nuget FsUnit.xUnit
 nuget Newtonsoft.Json
 nuget Suave
 nuget DotLiquid 
