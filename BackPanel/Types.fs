@@ -5,8 +5,8 @@ open BackPanel.Document
 
 type Page<'model, 'event> = {
     Initial: 'model
-    View: 'model -> Document
     Update: 'model -> 'event -> 'model
+    View: 'model -> Document
 }
 
 [<RQA>]

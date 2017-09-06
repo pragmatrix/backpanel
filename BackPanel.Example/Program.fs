@@ -57,7 +57,7 @@ let main argv =
     let configuration = { 
         BackPanel.defaultConfiguration with
             Title = "BackPanel Example"
-            Page = BackPanel.page model view update
+            Page = BackPanel.page model update view
     }
 
     use panel = BackPanel.startLocallyAt 8181 configuration

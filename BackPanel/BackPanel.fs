@@ -283,8 +283,8 @@ let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
     StartupMode = StartupMode.Synchronous
 }
 
-let page initial view update = {
+let page initial update view = {
     Initial = initial
-    View = view
     Update = update
+    View = view
 }
