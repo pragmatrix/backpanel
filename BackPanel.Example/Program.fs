@@ -20,6 +20,11 @@ let model = {
     Text = ""
 }
 
+let update (model: Model) = function
+    | SwitchedOne -> { model with Switch1 = not model.Switch1 }
+    | SwitchedTwo -> { model with Switch2 = not model.Switch2 }
+    | InputChanged str -> { model with Text = str }
+
 let view (model: Model) =
 
     section [!!"BackPanel Example"] [
@@ -45,11 +50,6 @@ let view (model: Model) =
             ]
         ]
     ]
-
-let update (model: Model) = function
-    | SwitchedOne -> { model with Switch1 = not model.Switch1 }
-    | SwitchedTwo -> { model with Switch2 = not model.Switch2 }
-    | InputChanged str -> { model with Text = str }
 
 [<EntryPoint>]
 let main argv = 
