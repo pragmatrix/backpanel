@@ -9,8 +9,39 @@ open Suave.Filters
 open Suave.Operators
 open Suave.Successful
 open Suave.Web
+open BackPanel
+open System
 open System.Net
 open System.Net.Sockets
+
+module Startup = 
+
+
+    [<Fact>]
+    let ``default startup mode is synchronous, and may immediately fail``() =
+    
+        let config = BackPanel.defaultConfiguration
+
+        use listener = new HttpListener()
+        listener.Prefixes.Add("http://127.0.0.1:8888/")
+        listener.Start()
+
+        fun () -> BackPanel.startLocallyAt 8888 config |> ignore
+        |> should throw typeof<SocketException>
+
+    [<Fact>]
+    let ``asynchonrous startup mode never fails``() =
+
+        let config = 
+            { BackPanel.defaultConfiguration with
+                StartupMode = StartupMode.Asynchronously (Some <| TimeSpan.FromSeconds(1.0)) }
+
+        use listener = new HttpListener()
+        listener.Prefixes.Add("http://127.0.0.1:8888/")
+        listener.Start()
+
+        use x = BackPanel.startLocallyAt 8888 config
+        ()
 
 module Suave =
 
@@ -63,4 +94,3 @@ module Suave =
             ] 
             |> Async.RunSynchronously
             |> ignore
-
