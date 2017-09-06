@@ -1,6 +1,8 @@
 # BackPanel
 
- Create HTML user interfaces with a F# DSL and an embedded HTTP server.
+Create HTML user interfaces with a F# DSL and an embedded HTTP server.
+
+TLDR: [BackPanel Example] | [Document DSL] | [BackPanel NuGet]
 
 ## Why
 
