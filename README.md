@@ -43,9 +43,7 @@ There is no simple way to do this right now, because some code in the [BackPanel
 
 ### How can the view model be changed from within the application.
 
-TBD.
-
-I think it's best to add an `Update` function to the server instance. This update can be called with one argument, a `Model -> Model` function that modifies the model and updates all clients.
+The BackPanel server implements a `Post` function, that delivers an event to the `update` function, updates the model, renders a view, and sends it to the browser.
 
 ### How can user events delivered to the application.
 
