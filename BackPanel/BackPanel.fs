@@ -5,6 +5,7 @@ open System.Threading
 open System.Text
 open System.IO
 open System.Reflection
+open System.Collections.Generic
 open Suave
 open Suave.Filters
 open Suave.Operators
@@ -71,61 +72,75 @@ module internal WS =
 
     [<RQA>]
     type Msg<'event> = 
-        | Reset
+        | Reset of WebSocket
         | Update of 'event
-        | Close
+        | Close of WebSocket
+    
+    type Sender<'event> = MailboxProcessor<Msg<'event>>
 
-    let ws 
-        (externalEvents: Async.EventQueue<'event>) 
-        (page: Page<'model, 'event>) 
-        (webSocket: WebSocket)
-        _ = 
+    // The sender manages state, calls update, renders the views, and sends out 
+    // updates to all active web sockets.
+    let sender (page: Page<'event,'state>) cancellation = MailboxProcessor.Start(fun inbox ->
 
-        // the sender is separated from the receiver, this way updates 
-        // updates can pushed to the websocket in response to external events.
+        let render state = 
+            page.View state
+            |> FlatUI.render flatUIConfiguration
+            |> HTML.renderJSON
 
-        let sender = MailboxProcessor.Start(fun inbox ->
-            let render state = 
-                page.View state
-                |> FlatUI.render flatUIConfiguration
-                |> HTML.renderJSON
+        let update = page.Update
 
-            let update = page.Update
+        let sockets = HashSet<WebSocket>()
 
-            let sendResponse response = 
-                serialize response
-                |> ByteSegment
-                |> fun data -> webSocket.send Opcode.Text data true
+        let post (socket: WebSocket) opcode data = 
+            socket.send opcode (ByteSegment data) true
+            |> Async.Ignore
+            |> fun job -> Async.Start(job, cancellation)
 
-            let rec loop state = async {
-                let! msg = inbox.Receive()
-                let! state = async { 
-                    try
-                        match msg with
-                        | Msg.Reset ->
-                            let! _ = sendResponse ^ Response.Update(0, render state)
-                            return Some state
-                        | Msg.Update event ->
-                            let state = update state event
-                            let! _ = sendResponse ^ Response.Update(0, render state)
-                            return Some state
-                        | Msg.Close ->
-                            let! _ = webSocket.send Opcode.Close (ByteSegment [||]) true
-                            return None
-                    with e ->
-                        // #7
-                        return None
-                }
+        let postAll data =
+            sockets
+            |> Seq.iter ^ fun socket ->
+                post socket Opcode.Text data
 
-                match state with
-                | Some state -> return! loop state
-                | None -> ()
+        let rec loop state = async {
+            let! msg = inbox.Receive()
+            let! state = async { 
+                try
+                    match msg with
+                    | Msg.Reset socket ->
+                        render state
+                        |> fun str -> Response.Update(0, str)
+                        |> serialize
+                        |> post socket Opcode.Text
+                        sockets.Add(socket) |> ignore
+                        return Some state
+                    | Msg.Close socket ->
+                        sockets.Remove(socket) |> ignore
+                        post socket Opcode.Close [||]
+                        return Some state
+                    | Msg.Update event ->
+                        let state = update state event
+                        render state
+                        |> fun str -> Response.Update(0, str)
+                        |> serialize
+                        |> postAll
+                        return Some state
+                with e ->
+                    // #7
+                    return None
             }
 
-            loop page.Initial
-        )
+            match state with
+            | Some state -> return! loop state
+            | None -> ()
+        }
 
-        
+        loop page.Initial
+    , cancellation)
+
+    let ws 
+        (sender: Sender<'event>) 
+        (webSocket: WebSocket)
+        _ = 
 
         let rec receiver() = socket {
             let! msg = webSocket.read()
@@ -134,7 +149,7 @@ module internal WS =
                 let request = deserialize<Request> data
                 match request with
                 | Request.Reset -> 
-                    sender.Post(Msg.Reset)
+                    sender.Post(Msg.Reset webSocket)
                     return! receiver()
                 | Request.Event eventData ->
                     let event = 
@@ -144,28 +159,11 @@ module internal WS =
                     return! receiver()
                 return! receiver()
             | (Opcode.Close , _, _) 
-                -> sender.Post(Msg.Close)
+                -> sender.Post(Msg.Close webSocket)
             | _ -> return! receiver()
         }
 
-        // we can not use Async.Choice inside the MailboxProcessor for some reason, 
-        // so we use an external dispatcher for dispatching the events.
-
-        let rec dispatcher() = async {
-            let! event = externalEvents.Dequeue()
-            sender.Post(Msg.Update event)
-            return! dispatcher()
-        }
-
-        async {
-            use __ = 
-                let source = new CancellationTokenSource()
-                Async.Start(dispatcher(), source.Token)
-                { new IDisposable with
-                    member this.Dispose() = source.Cancel(); source.Dispose() }
-
-            return! receiver()
-        }
+        receiver()
     
 [<AutoOpen>]
 module private Private =
@@ -227,6 +225,16 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
 
     let externalEvents = Async.createEventQueue()
 
+    let sender = WS.sender configuration.Page cancellationToken
+
+    let rec dispatcher() = async {
+        let! event = externalEvents.Dequeue()
+        sender.Post(WS.Msg.Update event)
+        return! dispatcher()
+    }
+
+    Async.Start(dispatcher(), cancellationToken)
+
     let app = 
         choose [
             GET >=> choose [
@@ -242,11 +250,10 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
                 path "/backpanel.js" >=> resourceTemplate "backpanel.js" arguments
                 path ("/" + wsPath) 
                     >=> Writers.setMimeType "application/json"
-                    >=> handShake (WS.ws externalEvents configuration.Page)
+                    >=> handShake (WS.ws sender)
                 NOT_FOUND "Not found."
             ]
         ]
-
 
     // start the server.
 
