@@ -17,6 +17,7 @@ open Suave.Embedded
 open DotLiquid
 open BackPanel.Document
 open Newtonsoft.Json
+open Suave.Utils.AsyncExtensions
 
 /// Template arguments for DotLiquid (must be public, otherwise DotLiquid won't pick it up).
 type TemplateArguments = {
@@ -185,23 +186,34 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
 
     // start the server.
 
+    let awaitTaskAndUnwrapException task = async {
+        try return! Async.AwaitTask task
+        with 
+        | :? AggregateException as a ->
+            raise a.InnerException
+    }
+
     match configuration.StartupMode with
-    | StartupMode.Synchronously ->
+    | StartupMode.Synchronous ->
         let listening, server = startWebServerAsync config app
+        let server = Async.StartAsTask(server, cancellationToken = config.cancellationToken)
         Async.Choice [
-            listening |> Async.map (fun _ -> Some())
-            server |> Async.map Some
+            listening |> Async.map (fun _ -> printfn "listening"; Some())
+            awaitTaskAndUnwrapException server
+            |> Async.map Some
         ] 
         |> Async.RunSynchronously
         |> ignore
 
-    | StartupMode.Asynchronously retryAfter ->
+    | StartupMode.Asynchronous retryAfter ->
         let rec startServer() = async {
             let listening, server = startWebServerAsync config app
+            let server = Async.StartAsTask(server, cancellationToken = config.cancellationToken)
             try
                 do! Async.Choice [
                         listening |> Async.map (fun _ -> Some())
-                        server |> Async.map Some
+                        awaitTaskAndUnwrapException server
+                        |> Async.map Some
                     ] 
                     |> Async.Ignore
             with _ ->
@@ -225,7 +237,7 @@ let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
         View = fun _ -> section [!!"Please configure a document for this BackPanel"] []
         Update = fun state _ -> state
     }
-    StartupMode = StartupMode.Synchronously
+    StartupMode = StartupMode.Synchronous
 }
 
 let page initial view update = {

@@ -13,6 +13,7 @@ open BackPanel
 open System
 open System.Net
 open System.Net.Sockets
+open System.Threading
 
 module Startup = 
 
@@ -34,7 +35,7 @@ module Startup =
 
         let config = 
             { BackPanel.defaultConfiguration with
-                StartupMode = StartupMode.Asynchronously (Some <| TimeSpan.FromSeconds(1.0)) }
+                StartupMode = StartupMode.Asynchronous (Some <| TimeSpan.FromSeconds(1.0)) }
 
         use listener = new HttpListener()
         listener.Prefixes.Add("http://127.0.0.1:8888/")
@@ -42,6 +43,26 @@ module Startup =
 
         use x = BackPanel.startLocallyAt 8888 config
         ()
+
+    [<Fact>]
+    let ``server actually runs after startup``() = 
+        let config = BackPanel.defaultConfiguration
+        use srv = BackPanel.startLocallyAt 8888 config
+        use client = new WebClient()
+        client.DownloadString("http://127.0.0.1:8888/")
+            .Contains("<!DOCTYPE")
+        |> should be True
+
+    [<Fact>]
+    let ``server runs after asynchronous startup``() =
+        let config = {
+            BackPanel.defaultConfiguration with
+                StartupMode = StartupMode.Asynchronous None }
+        use srv = BackPanel.startLocallyAt 8888 config
+        use client = new WebClient()
+        client.DownloadString("http://127.0.0.1:8888/")
+            .Contains("<!DOCTYPE")
+        |> should be True
 
 module Suave =
 

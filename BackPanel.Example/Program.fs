@@ -60,7 +60,7 @@ let main argv =
             Page = BackPanel.page model view update
     }
 
-    use panel = BackPanel.startLocallyAt (Port 8181) configuration
+    use panel = BackPanel.startLocallyAt 8181 configuration
 
     Process.Start("http://localhost:8181") |> ignore
 
