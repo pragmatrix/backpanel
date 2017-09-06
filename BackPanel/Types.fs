@@ -25,3 +25,9 @@ type Configuration<'model, 'event> = {
     Page: Page<'model, 'event>
     StartupMode: StartupMode
 }
+
+type Server<'event> = 
+    inherit IDisposable
+    /// Post an event to the server that will trigger an update to the model
+    /// and rebuilds the view.
+    abstract Post : 'event -> unit

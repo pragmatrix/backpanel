@@ -60,6 +60,7 @@
   <ItemGroup>
     <None Include="paket.references" />
     <Compile Include="Prelude.fs" />
+    <Compile Include="Async.fs" />
     <Compile Include="Document.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="HTML.fs" />

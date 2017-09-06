@@ -15,9 +15,9 @@ open Suave.WebSocket
 open Suave.Successful
 open Suave.Embedded
 open DotLiquid
+open BackPanel
 open BackPanel.Document
 open Newtonsoft.Json
-open Suave.Utils.AsyncExtensions
 
 /// Template arguments for DotLiquid (must be public, otherwise DotLiquid won't pick it up).
 type TemplateArguments = {
@@ -30,14 +30,16 @@ type TemplateArguments = {
     ]
 
 /// Incoming requests.
+[<RQA>]
 type Request = 
     | Reset
     | Event of string
 
+[<RQA>]
 type Response = 
     | Update of int * string
 
-module WS = 
+module internal WS = 
 
     let UTF8 = Encoding.UTF8
     let deserialize<'t> = 
@@ -67,43 +69,80 @@ module WS =
         RenderEventHandler = renderEventHandler
     }
 
-    let ws (page: Page<'model, 'event>) (webSocket: WebSocket) (context: HttpContext) = 
+    [<RQA>]
+    type Msg<'event> = 
+        | Reset
+        | Update of 'event
+        | Close
 
-        let render state = 
-            page.View state
-            |> FlatUI.render flatUIConfiguration
-            |> HTML.renderJSON
+    let ws 
+        (externalEvents: Async.EventQueue<'event>) 
+        (page: Page<'model, 'event>) 
+        (webSocket: WebSocket)
+        _ = 
 
-        let update = page.Update
+        // the sender is separated from the receiver, this way updates 
+        // updates can pushed to the websocket in response to external events.
 
-        let send response = 
-            serialize response
-            |> ByteSegment
-            |> fun data -> webSocket.send Opcode.Text data true
+        let sender = MailboxProcessor.Start(fun inbox ->
+            let render state = 
+                page.View state
+                |> FlatUI.render flatUIConfiguration
+                |> HTML.renderJSON
 
-        let rec loop state = socket {
+            let update = page.Update
+
+            let sendResponse response = 
+                serialize response
+                |> ByteSegment
+                |> fun data -> webSocket.send Opcode.Text data true
+
+            let rec loop state = async {
+                let! msg = 
+                    Async.Choice [
+                        inbox.Receive()
+                        |> Async.map Some
+                        externalEvents.Dequeue() 
+                        |> Async.map (Msg.Update >> Some)
+                    ]
+                match msg.Value with
+                | Msg.Reset ->
+                    let! _ = sendResponse ^ Response.Update(0, render state)
+                    return! loop state
+                | Msg.Update event ->
+                    let state = update state event
+                    let! _ = sendResponse ^ Response.Update(0, render state)
+                    return! loop state
+                | Msg.Close ->
+                    let! _ = webSocket.send Opcode.Close (ByteSegment [||]) true
+                    ()
+            }
+
+            loop page.Initial
+        )
+
+        let rec receiver() = socket {
             let! msg = webSocket.read()
             match msg with
             | (Opcode.Text, data, true) ->
                 let request = deserialize<Request> data
                 match request with
-                | Reset 
-                    -> do! send ^ Update(0, render state)
-                | Event eventData ->
+                | Request.Reset -> 
+                    sender.Post(Msg.Reset)
+                    return! receiver()
+                | Request.Event eventData ->
                     let event = 
                         eventData
                         |> JsonConvert.DeserializeObject<'event>
-                    let state = update state event
-                    do! send ^ Update(0, render state)
-                    return! loop state
-                return! loop state
-            | (Opcode.Close, _, _) 
-                -> do! webSocket.send Opcode.Close (ByteSegment [||]) true
-            | _ -> return! loop state
+                    sender.Post(Msg.Update event)
+                    return! receiver()
+                return! receiver()
+            | (Opcode.Close , _, _) 
+                -> sender.Post(Msg.Close)
+            | _ -> return! receiver()
         }
 
-        loop page.Initial
-
+        receiver()
     
 [<AutoOpen>]
 module private Private =
@@ -163,6 +202,8 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
             cancellationToken = cancellationToken
             bindings = [binding] }
 
+    let externalEvents = Async.createEventQueue()
+
     let app = 
         choose [
             GET >=> choose [
@@ -178,7 +219,7 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
                 path "/backpanel.js" >=> resourceTemplate "backpanel.js" arguments
                 path ("/" + wsPath) 
                     >=> Writers.setMimeType "application/json"
-                    >=> handShake (WS.ws configuration.Page)
+                    >=> handShake (WS.ws externalEvents configuration.Page)
                 NOT_FOUND "Not found."
             ]
         ]
@@ -198,7 +239,7 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
         let listening, server = startWebServerAsync config app
         let server = Async.StartAsTask(server, cancellationToken = config.cancellationToken)
         Async.Choice [
-            listening |> Async.map (fun _ -> printfn "listening"; Some())
+            listening |> Async.map (fun _ -> Some())
             awaitTaskAndUnwrapException server
             |> Async.map Some
         ] 
@@ -226,8 +267,10 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
 
         Async.Start(startServer(), cancellationToken)
         
-    { new IDisposable with
-            member this.Dispose() = cancellation.Cancel() }
+    { new Server<'event> with
+        member this.Post e = externalEvents.Enqueue e
+        member this.Dispose() = cancellation.Cancel()
+    }
 
 [<GeneralizableValue>]
 let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
