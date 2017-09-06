@@ -17,7 +17,6 @@ open System.Threading
 
 module Startup = 
 
-
     [<Fact>]
     let ``default startup mode is synchronous, and may immediately fail``() =
     
@@ -43,26 +42,6 @@ module Startup =
 
         use x = BackPanel.startLocallyAt 8888 config
         ()
-
-    [<Fact>]
-    let ``server actually runs after startup``() = 
-        let config = BackPanel.defaultConfiguration
-        use srv = BackPanel.startLocallyAt 8888 config
-        use client = new WebClient()
-        client.DownloadString("http://127.0.0.1:8888/")
-            .Contains("<!DOCTYPE")
-        |> should be True
-
-    [<Fact>]
-    let ``server runs after asynchronous startup``() =
-        let config = {
-            BackPanel.defaultConfiguration with
-                StartupMode = StartupMode.Asynchronous None }
-        use srv = BackPanel.startLocallyAt 8888 config
-        use client = new WebClient()
-        client.DownloadString("http://127.0.0.1:8888/")
-            .Contains("<!DOCTYPE")
-        |> should be True
 
 module Suave =
 

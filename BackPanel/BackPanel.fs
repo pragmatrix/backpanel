@@ -98,28 +98,34 @@ module internal WS =
                 |> fun data -> webSocket.send Opcode.Text data true
 
             let rec loop state = async {
-                let! msg = 
-                    Async.Choice [
-                        inbox.Receive()
-                        |> Async.map Some
-                        externalEvents.Dequeue() 
-                        |> Async.map (Msg.Update >> Some)
-                    ]
-                match msg.Value with
-                | Msg.Reset ->
-                    let! _ = sendResponse ^ Response.Update(0, render state)
-                    return! loop state
-                | Msg.Update event ->
-                    let state = update state event
-                    let! _ = sendResponse ^ Response.Update(0, render state)
-                    return! loop state
-                | Msg.Close ->
-                    let! _ = webSocket.send Opcode.Close (ByteSegment [||]) true
-                    ()
+                let! msg = inbox.Receive()
+                let! state = async { 
+                    try
+                        match msg with
+                        | Msg.Reset ->
+                            let! _ = sendResponse ^ Response.Update(0, render state)
+                            return Some state
+                        | Msg.Update event ->
+                            let state = update state event
+                            let! _ = sendResponse ^ Response.Update(0, render state)
+                            return Some state
+                        | Msg.Close ->
+                            let! _ = webSocket.send Opcode.Close (ByteSegment [||]) true
+                            return None
+                    with e ->
+                        // #7
+                        return None
+                }
+
+                match state with
+                | Some state -> return! loop state
+                | None -> ()
             }
 
             loop page.Initial
         )
+
+        
 
         let rec receiver() = socket {
             let! msg = webSocket.read()
@@ -142,7 +148,24 @@ module internal WS =
             | _ -> return! receiver()
         }
 
-        receiver()
+        // we can not use Async.Choice inside the MailboxProcessor for some reason, 
+        // so we use an external dispatcher for dispatching the events.
+
+        let rec dispatcher() = async {
+            let! event = externalEvents.Dequeue()
+            sender.Post(Msg.Update event)
+            return! dispatcher()
+        }
+
+        async {
+            use __ = 
+                let source = new CancellationTokenSource()
+                Async.Start(dispatcher(), source.Token)
+                { new IDisposable with
+                    member this.Dispose() = source.Cancel(); source.Dispose() }
+
+            return! receiver()
+        }
     
 [<AutoOpen>]
 module private Private =
