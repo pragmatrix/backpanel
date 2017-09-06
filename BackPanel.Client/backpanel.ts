@@ -3,11 +3,18 @@ declare var picodom: any;
 
 module BackPanel
 {
-	let ws = new WebSocket("{{websocket_url}}");
-	let root = document.getElementById("content");
-	ws.onopen = onOpen;
-	ws.onmessage = onMessage;
+	const root = document.getElementById("content");
+	var ws : WebSocket;
 
+	function initiateReset()
+	{
+		ws = new WebSocket("{{websocket_url}}");
+		ws.onopen = onOpen;
+		ws.onmessage = onMessage;
+		ws.onclose = onClose;
+		return ws;
+	}
+	
 	// Requests
 
 	interface Reset
@@ -21,6 +28,11 @@ module BackPanel
 		Fields: [string];
 	}
 
+	// State
+
+	var currentElement: HTMLElement;
+	var currentDOM: any;
+
 	// Responses
 
 	interface Update
@@ -32,11 +44,13 @@ module BackPanel
 
 	function onOpen(event: Event)
 	{
+		$('#bp-connection-lost').modal("hide");
+
+		currentElement = null;
+		currentDOM = null;
+		root.innerHTML = "";
 		sendObject({ Case: "Reset" } as Reset);
 	}
-
-	var currentElement: HTMLElement;
-	var currentDOM: any;
 
 	function onMessage(event: MessageEvent)
 	{
@@ -65,4 +79,13 @@ module BackPanel
 	{
 		ws.send(JSON.stringify(obj));
 	}
+
+	function onClose(close: CloseEvent)
+	{
+		$('#bp-connection-lost').modal("show");
+
+		setTimeout(() => initiateReset(), 1000);
+	}
+
+	initiateReset();
 }
