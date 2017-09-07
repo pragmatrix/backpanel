@@ -35,11 +35,12 @@ let view (model: Model) =
                 column [
                     checkbox [!!"Setting 1"] model.Switch1 SwitchedOne
                     checkbox [!!"Setting 2"] model.Switch2 SwitchedTwo
+                    button Primary [!!"Toggle Setting 2"] SwitchedTwo
                 ]
                 column [
                     checkbox [!!"Setting 1"] model.Switch1 SwitchedOne
                     checkbox [!!"Setting 2"] model.Switch2 SwitchedTwo
-                    button Primary [!!"Toggle Setting 2"] SwitchedTwo
+                    
                 ]
             ]
             row [
@@ -48,6 +49,23 @@ let view (model: Model) =
                     para [!!model.Text]
                 ]
             ]
+        ]
+        section [!!"Tables"] [
+            section [!!"With Header"] [
+                table [[!!"Firstname"]; [!!"Lastname"]; [!!"Email"]] [
+                    [[!!"John"]; [!!"Doe"]; [!!"john@example.com"] ]
+                    [[!!"May"]; [!!"Moe"]; [!!"mary@example.com" ] ]
+                    [[!!"July"]; [!!"Dooley"]; [!!"july@example.com"] ]
+                ]
+            ]
+            section [!!"Without Header"] [
+                table [] [
+                    [[!!"John"]; [!!"Doe"]; [!!"john@example.com"] ]
+                    [[!!"May"]; [!!"Moe"]; [!!"mary@example.com" ] ]
+                    [[!!"July"]; [!!"Dooley"]; [!!"july@example.com"] ]
+                ]
+            ]
+
         ]
     ]
 

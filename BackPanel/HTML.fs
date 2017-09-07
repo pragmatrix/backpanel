@@ -26,6 +26,13 @@ let p = element "p"
 let button = element "button"
 let span = element "span"
 
+let table = element "table"
+let thead = element "thead"
+let tbody = element  "tbody"
+let tr = element "tr"
+let th = element "th"
+let td = element "td"
+
 /// Render a HTML representation.
 let render content = 
 

@@ -96,6 +96,26 @@ let render (configuration: Configuration) (document: Document) : Content =
             ]
             
             input attrs []
+        | Table(header, rows) ->
+            let header = 
+                match header with
+                | [] -> None
+                | _ ->
+                    header 
+                    |> List.map ^ (renderInline >> th [])
+                    |> Some
+
+            let body = 
+                rows
+                |> List.map ^ List.map (renderInline >> td [])
+                |> List.map ^ tr []
+
+
+            table [classes ["table"]] [
+                if header.IsSome then
+                    yield thead [] header.Value
+                yield tbody [] body
+            ]
 
     and renderColumn level columnClass (Column(boxes)) =
         boxes 

@@ -28,6 +28,7 @@ module Representation =
         | Checkbox of Inline * bool * obj
         | Button of ButtonType * Inline * obj
         | Input of InputType * string * string * (string -> obj)
+        | Table of header: Inline list * rows: Inline list list
 
     type Columns = Column list 
 
@@ -63,3 +64,6 @@ let input enabled placeholder content command =
 
 let para content = 
     Paragraph content
+
+let table header rows = 
+    Table(header, rows)
