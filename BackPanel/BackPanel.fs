@@ -92,9 +92,12 @@ module internal WS =
         let sockets = HashSet<WebSocket>()
 
         let post (socket: WebSocket) opcode data = 
-            socket.send opcode (ByteSegment data) true
-            |> Async.Ignore
-            |> fun job -> Async.Start(job, cancellation)
+            // ignore socket.send errors and assume that errors are 
+            // detected on the read side.
+            let job = 
+                socket.send opcode (ByteSegment data) true
+                |> Async.Ignore
+            Async.Start(job, cancellation)
 
         let postAll data =
             sockets
