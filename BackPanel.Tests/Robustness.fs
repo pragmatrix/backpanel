@@ -13,9 +13,9 @@ open BackPanel
 open System
 open System.Net
 open System.Net.Sockets
-open System.Threading
 
 module Startup = 
+
 
     [<Fact>]
     let ``default startup mode is synchronous, and may immediately fail``() =
@@ -40,19 +40,65 @@ module Startup =
         listener.Prefixes.Add("http://127.0.0.1:8888/")
         listener.Start()
 
-        use x = BackPanel.startLocallyAt 8888 config
+        use __ = BackPanel.startLocallyAt 8888 config
         ()
 
+module ErrorHandling =
 
     [<Fact>]
-    let ``exception in update does not crash the server``() =
+    let ``encoding error closes socket and supports a reconnect``() = 
+        let config = BackPanel.defaultConfiguration
+        use __ = BackPanel.startLocallyAt 8888 config
+        Async.RunSynchronously ^ async {
+            do! async {
+                use ws = WebSocketClient.create()
+                do! WebSocketClient.connect 8888 ws
+                do! WebSocketClient.send "invalid JSON!!!" ws
+                let! str = WebSocketClient.read ws
+                str |> should equal "" // < closed
+            }
+            let! dom = WebSocketClient.connectAndReset 8888
+            dom.Contains("Please configure a document") 
+            |> should equal true
+        }
+    
+    [<Fact>]
+    let ``client websocket gets disconnected after reset and can reconnect after``() = 
+        let config = BackPanel.defaultConfiguration
+        use __ = BackPanel.startLocallyAt 8888 config
+        Async.RunSynchronously ^ async {
+            do! async {
+                use ws = WebSocketClient.create()
+                do! WebSocketClient.connect 8888 ws
+                do! WebSocketClient.reset ws
+                do! WebSocketClient.close ws
+            }
+            let! dom = WebSocketClient.connectAndReset 8888
+            dom.Contains("Please configure a document") 
+            |> should equal true
+        }
+
+            
+#if false
+    // just recognized that i've no idea what to do when update fails.
+
+    [<Fact>]
+    let ``one time exception in update gets ignored``() =
         let config = 
+            let page = 
+                BackPanel.page 
+                    false 
+                    (fun _ _ -> failwith "holy shit") 
+                    (fun _ -> para[!!"nothing there to see"])
+
             { BackPanel.defaultConfiguration with
-                StartupMode = StartupMode.Synchronous }
+                Page = page
+            }
 
         use x = BackPanel.startLocallyAt 8888 config
-        ()
-
+        x.Post(true)
+        ignore ^ Async.RunSynchronously ^ WebSocketClient.connectAndReset 8888
+#endif
 
 module Suave =
 
