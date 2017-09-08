@@ -143,7 +143,7 @@ module internal WS =
     let ws 
         (sender: Sender<'event>) 
         (webSocket: WebSocket)
-        _ = 
+        _ = socket {
 
         let rec receiver() = socket {
             let! msg = webSocket.read()
@@ -162,12 +162,15 @@ module internal WS =
                     return! receiver()
                 return! receiver()
             | (Opcode.Close , _, _) 
-                -> sender.Post(Msg.Close webSocket)
+                -> ()
             | _ -> return! receiver()
         }
 
-        receiver()
-    
+        try
+            return! receiver()
+        finally
+            sender.Post(Msg.Close webSocket)
+    }    
 [<AutoOpen>]
 module private Private =
 
