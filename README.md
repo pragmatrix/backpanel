@@ -27,7 +27,7 @@ To create a document, the [Document DSL] must be used. At the time of this writi
 
 ## How
 
-Batteries are included. If you add the [BackPanel NuGet] to your project, it comes with [Suave], [Bootstrap], and [FlatUI]. There is no need to use a single line of JavaScript, HTML, or CSS. The F# [Document DSL] should cover everything to build the UI. And if it does not, pull requests are appreciated.
+If you add the [BackPanel NuGet] to your project, it comes with [Suave], [Bootstrap], and [FlatUI]. There is no need to use a single line of JavaScript, HTML, or CSS. The F# [Document DSL] should cover everything to build the UI. And if it does not, pull requests are appreciated.
 
 Once the server starts serving the UI and the user opens the URL it is listening at, a [index.html] page with almost no HTML content is delivered to the browser. This page loads the [BackPanel Client] that connects back to the server utilizing a WebSocket which stays connected for the time the page is open. Whenever the server has new content, it sends it to the browser and whenever the user triggers an event, the browser sends the event to the server.
 
