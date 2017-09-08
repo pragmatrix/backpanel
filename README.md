@@ -6,15 +6,15 @@ TLDR: [BackPanel Example] | [Document DSL] | [BackPanel NuGet]
 
 ## Why
 
-Because some of my .NET services need a user interface for configuring settings while they run.
+Because the .NET services I am working on need a user interface for configuring settings while they run.
 
 And also there is currently no simple way to create platform independent user interfaces for dotnet core applications, so HTML seems to be only option.
 
-And furthermore, client side programming with JavaScript or [whatever technology][Fable] that creates JavaScript is not my thing, so I want everything to be rendered on the server side. After all, BackPanel UIs are not meant to be used remotely, so server side rendering should be fast enough.
+Furthermore, client side programming with JavaScript or the use of transpilers like [Fable] is not my preferred way to create web applications, so BackPanel tries something different and generates the DOM on the server. Practically, this is not recommended for creating web applications that need to feel responsive with slow internet connections, but after all, BackPanel UIs are not meant to be used remotely.
 
 ## What
 
-BackPanel provides a [Docbook] inspired DSL to specify a user interface which is translated to HTML and served via [Suave].
+BackPanel provides a [Docbook] inspired DSL to specify a user interface which is translated to the browser DOM and served via [Suave].
 
 In addition to that, BackPanel follows the [Elm Architecture] for the creation of the user interface. For a simple one like the [BackPanel Example] only two methods need to be implemented:
 
