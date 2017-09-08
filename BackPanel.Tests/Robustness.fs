@@ -43,6 +43,17 @@ module Startup =
         use x = BackPanel.startLocallyAt 8888 config
         ()
 
+
+    [<Fact>]
+    let ``exception in update does not crash the server``() =
+        let config = 
+            { BackPanel.defaultConfiguration with
+                StartupMode = StartupMode.Synchronous }
+
+        use x = BackPanel.startLocallyAt 8888 config
+        ()
+
+
 module Suave =
 
     let ip = "127.0.0.1"

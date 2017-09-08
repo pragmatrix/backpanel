@@ -48,21 +48,7 @@ module Post =
         use panel = BackPanel.startLocallyAt 8888 config
         panel.Post(true)
 
-        let await t = Async.AwaitTask t
-        let awaitu (t: Task) = Async.AwaitTask t
+        let str = Async.RunSynchronously ^ WebSocketClient.connectAndReset 8888
 
-        Async.RunSynchronously ^ async {
-            let ws = new ClientWebSocket()
-            let tk = Async.DefaultCancellationToken
-            do! awaitu ^ ws.ConnectAsync(Uri("ws://127.0.0.1:8888/ws"), tk)
-            let req = Encoding.UTF8.GetBytes "{\"Case\":\"Reset\"}"
-            do! awaitu ^ ws.SendAsync(ArraySegment(req), WebSocketMessageType.Text, true, tk)
-            let buf = Array.zeroCreate 4096
-            let buffer = ArraySegment(buf)
-            let! r = await ^ ws.ReceiveAsync(buffer, tk)
-            if not r.EndOfMessage then failwith "too lazy to receive more!"
-            let str = Encoding.UTF8.GetString(buf, 0, r.Count)
-            str.Contains("Model: true")
-            |> should equal true
-        }
-
+        str.Contains("Model: true")
+        |> should equal true
