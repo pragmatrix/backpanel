@@ -6,15 +6,15 @@ TLDR: [BackPanel Example] | [Document DSL] | [BackPanel NuGet]
 
 ## Why
 
-Because some of my .NET services need a user interface for configuring settings while they run.
+Because the .NET services I am working on need a user interface for configuring settings while they run.
 
 And also there is currently no simple way to create platform independent user interfaces for dotnet core applications, so HTML seems to be only option.
 
-And furthermore, client side programming with JavaScript or [whatever technology][Fable] that creates JavaScript is not my thing, so I want everything to be rendered on the server side. After all, BackPanel UIs are not meant to be used remotely, so server side rendering should be fast enough.
+Furthermore, client side programming with JavaScript or the use of transpilers like [Fable] is not my preferred way to create web applications, so BackPanel tries something different and generates the DOM on the server. Practically, this is not recommended for creating web applications that need to feel responsive with slow internet connections, but after all, BackPanel UIs are not meant to be used remotely.
 
 ## What
 
-BackPanel provides a [Docbook] inspired DSL to specify a user interface which is translated to HTML and served via [Suave].
+BackPanel provides a [Docbook] inspired DSL to specify a user interface which is translated to the browser DOM and served via [Suave].
 
 In addition to that, BackPanel follows the [Elm Architecture] for the creation of the user interface. For a simple one like the [BackPanel Example] only two methods need to be implemented:
 
@@ -27,7 +27,7 @@ To create a document, the [Document DSL] must be used. At the time of this writi
 
 ## How
 
-Batteries are included. If you add the [BackPanel NuGet] to your project, it comes with [Suave], [Bootstrap], and [FlatUI]. There is no need to use a single line of JavaScript, HTML, or CSS. The F# [Document DSL] should cover everything to build the UI. And if it does not, pull requests are appreciated.
+If you add the [BackPanel NuGet] to your project, it comes with [Suave], [Bootstrap], and [FlatUI]. There is no need to use a single line of JavaScript, HTML, or CSS. The F# [Document DSL] should cover everything to build the UI. And if it does not, pull requests are appreciated.
 
 Once the server starts serving the UI and the user opens the URL it is listening at, a [index.html] page with almost no HTML content is delivered to the browser. This page loads the [BackPanel Client] that connects back to the server utilizing a WebSocket which stays connected for the time the page is open. Whenever the server has new content, it sends it to the browser and whenever the user triggers an event, the browser sends the event to the server.
 
@@ -45,7 +45,7 @@ There is no simple way to do this right now, because some code in the [BackPanel
 
 ### How can the view model be changed from within the application.
 
-The BackPanel server implements a `Post` function, that delivers an event to the `update` function, updates the model, renders a view, and sends it to the browser.
+The BackPanel server implements a `Post` function that delivers an event to the `update` function, updates the model, renders a view, and sends it to the browser.
 
 ### How can user events delivered to the application.
 
