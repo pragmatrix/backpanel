@@ -4,6 +4,10 @@ Create HTML user interfaces with a F# DSL and an embedded HTTP server.
 
 TLDR: [BackPanel Example] | [Document DSL] | [BackPanel NuGet]
 
+## Installation
+
+Use the [BackPanel NuGet] if possible. To compile the source you need to install Visual Studio 2017, [TypeScript], [Paket], and [NPM]. Then use `paket restore` and `npm install`.
+
 ## Why
 
 Because the .NET services I am working on need a user interface for configuring settings while they run.
@@ -72,3 +76,6 @@ Copyright 2017 Armin Sander
 [MIT License]: https://opensource.org/licenses/MIT
 [picodom]: https://github.com/picodom/picodom
 [index.html]: BackPanel/index.html
+[TypeScript]: https://www.typescriptlang.org/
+[Paket]: https://fsprojects.github.io/Paket/
+[NPM]: https://www.npmjs.com/get-npm
