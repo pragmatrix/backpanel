@@ -2,9 +2,9 @@ framework: auto-detect
 source https://www.nuget.org/api/v2
 nuget FSharp.Core
 nuget FsUnit.xUnit
-nuget Microsoft.CodeDom.Providers.DotNetCompilerPlatform 1.0.5 restriction: >= net45
-nuget Microsoft.Net.Compilers 2.1.0 restriction: >= net45
+nuget Microsoft.CodeDom.Providers.DotNetCompilerPlatform 
+nuget Microsoft.Net.Compilers
 nuget Newtonsoft.Json
 nuget Suave
 nuget DotLiquid 
-nuget System.ValueTuple 4.3.1 restriction: >= net461
+nuget System.ValueTuple 
