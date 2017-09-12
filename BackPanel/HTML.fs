@@ -5,18 +5,16 @@ open System.IO
 open System.Xml.Linq
 open Newtonsoft.Json
 
-type Attribute = Attribute of string * string
+type Attribute = string * string
 type Content = 
     | Text of string
     | Element of string * Attribute list * Content list
 
 let element name attributes content = 
     Element(name, attributes, content)
-let attr name value = 
-    Attribute(name, value)
 
-let clazz = attr "class"
-let classes : string seq -> Attribute = String.concat " " >> attr "class"
+let clazz c = "class", c
+let classes : string seq -> Attribute = String.concat " " >> clazz
 let h level = element (sprintf "h%d" level)
 
 let div = element "div"
@@ -38,7 +36,7 @@ let render content =
 
     let xname = XName.op_Implicit
 
-    let renderAttribute (Attribute(name, value)) = 
+    let renderAttribute (name, value) = 
         XAttribute(xname name, value)
 
     let rec renderContent = function
@@ -69,9 +67,10 @@ let renderJSON content =
                 writer.WriteValue(name)
                 writer.WritePropertyName("data")
                 writer.WriteStartObject()
-                for (Attribute(name, value)) in attributes do
-                    writer.WritePropertyName(name)
-                    writer.WriteValue(value)
+                attributes |> Seq.iter 
+                    ^ fun (name, value) ->
+                        writer.WritePropertyName(name)
+                        writer.WriteValue(value)
                 writer.WriteEndObject()
                 writer.WritePropertyName("children")
                 writer.WriteStartArray()

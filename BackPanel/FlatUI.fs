@@ -53,15 +53,15 @@ let render (configuration: Configuration) (document: Document) : Content =
         | Checkbox(inlineLabel, state, command) -> 
             let input = 
                 input [
-                    yield attr "type" "checkbox"
-                    yield attr "data-toggle" "checkbox"
+                    yield "type", "checkbox"
+                    yield "data-toggle", "checkbox"
                     if state then
-                        yield attr "checked" "checked"
-                    yield attr "onchange" (renderCommand command)
+                        yield "checked", "checked"
+                    yield "onchange", renderCommand command
                 ] []
             let fragments = renderInline inlineLabel
             let icons = 
-                span [clazz "icons"; attr "remove-on-init" "remove"] 
+                span [clazz "icons"; "remove-on-init", "remove"] 
                     [
                         span [clazz "icon-unchecked"] []
                         span [clazz "icon-checked"] []
@@ -84,15 +84,15 @@ let render (configuration: Configuration) (document: Document) : Content =
                 ["btn"; "btn-block"; buttonTypeClass]
 
             button 
-                [classes allClasses; attr "onclick" (renderCommand command)] 
+                [classes allClasses; "onclick", renderCommand command] 
                 (renderInline inlineLabel)
         | Input(inputType, placeholder, text, command) ->
             let attrs = [
                 clazz "form-control" 
-                attr "type" "text"
-                attr "value" text
-                attr "placeholder" placeholder
-                attr "oninput" (renderEventHandler (RenderableEvent.ParameterizedThis("value", command)))
+                "type", "text"
+                "value", text
+                "placeholder", placeholder
+                "oninput", renderEventHandler (RenderableEvent.ParameterizedThis("value", command))
             ]
             
             input attrs []
