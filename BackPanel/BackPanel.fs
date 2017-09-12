@@ -218,7 +218,6 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
     let cancellation = new CancellationTokenSource()
     let cancellationToken = cancellation.Token
 
-
     let arguments = {
         Title = configuration.Title
         WebsocketURL = sprintf "ws://%s:%d/%s" ip port wsPath
