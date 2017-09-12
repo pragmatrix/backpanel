@@ -1,2 +1,4 @@
 FsUnit.xUnit
 Suave
+System.ValueTuple
+FSharp.Core
