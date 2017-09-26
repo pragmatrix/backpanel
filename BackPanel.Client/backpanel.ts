@@ -38,7 +38,7 @@ module BackPanel
 	interface Update
 	{
 		Case: "Update";
-		// version, HTML
+		// version, DOM
 		Fields: [number, string];
 	}
 
