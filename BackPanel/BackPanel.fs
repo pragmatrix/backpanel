@@ -94,9 +94,12 @@ module internal WS =
         let post (socket: WebSocket) opcode data = 
             // ignore socket.send errors and assume that errors are 
             // detected on the read side.
-            let job = 
-                socket.send opcode (ByteSegment data) true
-                |> Async.Ignore
+            let job = async {
+                try
+                    do! socket.send opcode (ByteSegment data) true
+                        |> Async.Ignore
+                with _ -> ()
+            }
             Async.Start(job, cancellation)
 
         let postAll data =
