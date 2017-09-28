@@ -259,6 +259,10 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
                 path ("/" + wsPath) 
                     >=> Writers.setMimeType "application/json"
                     >=> handShake (WS.ws sender)
+                
+            ]
+            configuration.WebPart
+            GET >=> choose [
                 NOT_FOUND "Not found."
             ]
         ]
@@ -319,6 +323,7 @@ let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
         Update = fun state _ -> state
     }
     StartupMode = StartupMode.Synchronous
+    WebPart = WebPart.choose []
 }
 
 let page initial update view = {

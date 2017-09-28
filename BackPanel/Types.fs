@@ -1,6 +1,7 @@
 ﻿namespace BackPanel
 
 open System
+open Suave
 open BackPanel.Document
 
 type Page<'model, 'event> = {
@@ -24,6 +25,9 @@ type Configuration<'model, 'event> = {
     Title: string
     Page: Page<'model, 'event>
     StartupMode: StartupMode
+    /// An additional Suave web part that is inserted after the WebParts the
+    /// BackPanel uses and before a 404 NOT FOUND handler.
+    WebPart: WebPart
 }
 
 type Server<'event> = 

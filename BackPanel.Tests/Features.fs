@@ -2,13 +2,14 @@
 
 open System
 open System.Net
-open System.Text
 open FsUnit.Xunit
 open Xunit
+open Suave
 open BackPanel
 open BackPanel.Document
-open System.Net.WebSockets
-open System.Threading.Tasks
+open Suave.Filters
+open Suave.Operators
+open Suave.Successful
 
 module Server =
 
@@ -52,3 +53,25 @@ module Post =
 
         str.Contains("Model: true")
         |> should equal true
+
+module WebParts = 
+
+    [<Fact>]
+    let ``additional web part``() = 
+        let initial = false
+        let update _ event = event
+        let view m = section [!!(sprintf "Model: %A" m)] []
+
+        let config = {
+            BackPanel.defaultConfiguration with
+                Page = BackPanel.page initial update view
+                WebPart = 
+                    GET >=> path "/info" >=> OK "Info!!!"
+            }
+
+        use panel = BackPanel.startLocallyAt 8888 config
+        panel.Post(true)
+
+        use client = new WebClient()
+        client.DownloadString("http://127.0.0.1:8888/info")
+        |> should equal "Info!!!"
