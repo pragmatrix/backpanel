@@ -17,8 +17,8 @@ open System.Runtime.CompilerServices
 
 [<assembly: Guid("d3aa968a-33a1-44bc-9ee9-ff4a0e510c99")>]
 
-[<assembly: AssemblyVersion("0.10.0.0")>]
-[<assembly: AssemblyFileVersion("0.10.0.0")>]
+[<assembly: AssemblyVersion("0.11.0.0")>]
+[<assembly: AssemblyFileVersion("0.11.0.0")>]
 
 [<assembly: InternalsVisibleTo("BackPanel.Tests")>]
 
