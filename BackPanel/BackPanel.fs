@@ -163,7 +163,6 @@ module internal WS =
                         |> JsonConvert.DeserializeObject<'event>
                     sender.Post(Msg.Update event)
                     return! receiver()
-                return! receiver()
             | (Opcode.Close , _, _) 
                 -> ()
             | _ -> return! receiver()
