@@ -228,7 +228,8 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
     let config = 
         { defaultConfig with 
             cancellationToken = cancellationToken
-            bindings = [binding] }
+            bindings = [binding] 
+            autoGrow = configuration.AutoGrowBuffers }
 
     let externalEvents = Async.createEventQueue()
 
@@ -323,6 +324,7 @@ let defaultConfiguration<'model, 'event> : Configuration<'model, 'event> = {
     }
     StartupMode = StartupMode.Synchronous
     WebPart = WebPart.choose []
+    AutoGrowBuffers = false
 }
 
 let page initial update view = {

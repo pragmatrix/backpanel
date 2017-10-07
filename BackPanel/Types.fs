@@ -28,6 +28,8 @@ type Configuration<'model, 'event> = {
     /// An additional Suave web part that is inserted after the WebParts the
     /// BackPanel uses and before a 404 NOT FOUND handler.
     WebPart: WebPart
+    /// Autogrow Suave Buffers. Default: false.
+    AutoGrowBuffers: bool
 }
 
 type Server<'event> = 
