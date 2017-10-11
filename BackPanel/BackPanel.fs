@@ -229,7 +229,9 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
         { defaultConfig with 
             cancellationToken = cancellationToken
             bindings = [binding] 
-            autoGrow = configuration.AutoGrowBuffers }
+            autoGrow = configuration.AutoGrowBuffers
+            tcpServerFactory = new BackPanelTcpServerFactory()
+        }
 
     let externalEvents = Async.createEventQueue()
 

@@ -65,6 +65,7 @@
     <Compile Include="Types.fs" />
     <Compile Include="HTML.fs" />
     <Compile Include="FlatUI.fs" />
+    <Compile Include="Suave.fs" />
     <Compile Include="BackPanel.fs" />
     <Compile Include="AssemblyInfo.fs" />
     <EmbeddedResource Include="index.html" />
