@@ -292,19 +292,24 @@ let startLocallyAt (port:int) (configuration: Configuration<'model, 'event>) =
         let rec startServer() = async {
             let listening, server = startWebServerAsync config app
             let server = Async.StartAsTask(server, cancellationToken = config.cancellationToken)
-            try
-                do! Async.Choice [
-                        listening |> Async.map (fun _ -> Some())
-                        awaitTaskAndUnwrapException server
-                        |> Async.map Some
-                    ] 
-                    |> Async.Ignore
-            with _ ->
-                match retryAfter with
-                | None -> ()
-                | Some retryAfter ->
-                    do! Async.Sleep (int retryAfter.TotalMilliseconds)
-                    return! startServer()
+            let! retry = async {
+                try
+                    do! Async.Choice [
+                            listening |> Async.map (fun _ -> Some())
+                            awaitTaskAndUnwrapException server
+                            |> Async.map Some
+                        ] 
+                        |> Async.Ignore
+                    return false
+                with _ ->
+                    return true
+            }
+            match retry, retryAfter with
+            | true, Some retryAfter ->
+                do! Async.Sleep (int retryAfter.TotalMilliseconds)
+                return! startServer()
+            | _ -> 
+                return ()
         }
 
         Async.Start(startServer(), cancellationToken)
